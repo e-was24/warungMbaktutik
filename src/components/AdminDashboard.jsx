@@ -58,10 +58,13 @@ const AdminDashboard = ({ onBack }) => {
             const res = await fetch(`/api/sync?t=${Date.now()}`);
             if (!res.ok) return;
             const cloudData = await res.json();
-            const cloudProducts = Array.isArray(cloudData) ? cloudData : (cloudData.products || []);
             
-            if (Array.isArray(cloudProducts) && cloudProducts.length > 0) {
-                // If cloud has data, it should seed the local view
+            // Support legacy array and new object format
+            const cloudProducts = Array.isArray(cloudData) ? cloudData : (cloudData.products || []);
+            const isInitialized = cloudData.isInitialized || false;
+
+            if (isInitialized) {
+                // If cloud is established, it's the source of truth
                 setCustomProducts(cloudProducts);
                 localStorage.setItem('warung_custom_products', JSON.stringify(cloudProducts));
             }

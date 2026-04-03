@@ -213,7 +213,7 @@ const AdminDashboard = ({ onBack }) => {
         } catch (error) {
             console.error("Sync Error:", error);
             setSyncStatus(`Gagal: ${error.message} ❌`);
-            alert(`Gagal Sinkron: ${error.message}`);
+            alert(`Gagal Sinkron: ${error.message}${error.details ? `\nDetail: ${error.details}` : ''}`);
         } finally {
             setIsSyncing(false);
         }

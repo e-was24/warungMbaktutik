@@ -38,6 +38,7 @@ export default async function handler(req, res) {
       const result = await put('warung-menu.json', JSON.stringify(products), {
         access: 'public',
         addRandomSuffix: false,
+        allowOverwrite: true,
         contentType: 'application/json'
       });
       

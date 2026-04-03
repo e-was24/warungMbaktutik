@@ -30,6 +30,8 @@ export default async function handler(req, res) {
     const filename = req.headers['x-filename'] || 'upload.png';
     const blob = await put(filename, req, {
       access: 'public',
+      addRandomSuffix: false,
+      allowOverwrite: true
     });
 
     return res.status(200).json(blob);

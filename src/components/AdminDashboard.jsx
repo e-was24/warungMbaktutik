@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import { doc, setDoc, collection, writeBatch } from "firebase/firestore";
+import { db } from "../firebase";
 import './AdminDashboard.css';
 
 const AdminDashboard = ({ onBack }) => {
@@ -8,6 +9,8 @@ const AdminDashboard = ({ onBack }) => {
     const [newProduct, setNewProduct] = useState({ name: '', price: '', category: 'minuman', variant: '', image: null });
     const [imagePreview, setImagePreview] = useState(null);
     const [editingVariant, setEditingVariant] = useState(null); // { id, price, variant }
+    const [isSyncing, setIsSyncing] = useState(false);
+    const [syncStatus, setSyncStatus] = useState('');
 
     useEffect(() => {
         loadData();
@@ -128,6 +131,33 @@ const AdminDashboard = ({ onBack }) => {
         }
     };
 
+    const syncToCloud = async () => {
+        if (!confirm('Kirim semua data menu saat ini ke Cloud (Internet)? Data di HP lain akan terupdate.')) return;
+        
+        setIsSyncing(true);
+        setSyncStatus('Sedang Mengunggah...');
+        
+        try {
+            const batch = writeBatch(db);
+            
+            // Upload products
+            customProducts.forEach(product => {
+                const docRef = doc(db, "custom_products", product.id.toString());
+                batch.set(docRef, product);
+            });
+            
+            await batch.commit();
+            setSyncStatus('Berhasil di-Post! ✅');
+            setTimeout(() => setSyncStatus(''), 3000);
+        } catch (error) {
+            console.error("Sync Error:", error);
+            setSyncStatus('Gagal Sinkron ❌');
+            alert('Gagal Sinkron: Pastikan kamu sudah memasukkan Firebase Config di .env');
+        } finally {
+            setIsSyncing(false);
+        }
+    };
+
     return (
         <div className='admin-layout'>
             <nav className='admin-nav'>
@@ -153,6 +183,24 @@ const AdminDashboard = ({ onBack }) => {
                     <div className='stat-card danger'>
                         <span className='stat-label'>Dibatalkan</span>
                         <span className='stat-value'>{stats.cancelledOrders}</span>
+                    </div>
+                </div>
+
+                {/* Cloud Sync Tool */}
+                <div className='admin-section cloud-sync-box'>
+                    <div className='sync-header'>
+                        <h2>Cloud Synchronization</h2>
+                        {syncStatus && <span className='sync-msg'>{syncStatus}</span>}
+                    </div>
+                    <div className='sync-actions'>
+                        <p>Kirim perubahan menu dari Laptop ini agar muncul di HP pembeli & perangkat lain.</p>
+                        <button 
+                            className={`post-cloud-btn ${isSyncing ? 'loading' : ''}`} 
+                            onClick={syncToCloud}
+                            disabled={isSyncing}
+                        >
+                            {isSyncing ? 'SINKRONISASI...' : 'POST (SINKRON KE CLOUD) 🚀'}
+                        </button>
                     </div>
                 </div>
 

@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import { collection, onSnapshot, query } from "firebase/firestore";
+import { db } from "../firebase";
 import './HomePage.css'
 import teaImg from '../assets/tea_series.png'
 import yakultImg from '../assets/yakult_series.png'
@@ -160,8 +161,62 @@ const HomePage = ({ onAdminClick }) => {
         };
 
         loadCustomProducts();
+
+        // Real-time Cloud Sync Listener
+        const q = query(collection(db, "custom_products"));
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const cloudProducts = snapshot.docs.map(doc => ({
+                ...doc.data(),
+                id: parseInt(doc.id) // Ensure ID is number
+            }));
+            
+            if (cloudProducts.length > 0) {
+                // Merge or replace local products with cloud data
+                const groupProducts = (items) => {
+                    const threeDaysAgo = Date.now() - (3 * 24 * 60 * 60 * 1000);
+                    const grouped = items.reduce((acc, p) => {
+                        const name = p.name.toUpperCase();
+                        if (!acc[name]) {
+                            acc[name] = { 
+                                category: name, 
+                                id: `custom-${name}`, 
+                                image: p.image || null,
+                                items: [],
+                                isNew: false
+                            };
+                        }
+                        acc[name].items.push({ 
+                            name: p.variant ? `${name} (${p.variant.toUpperCase()})` : name, 
+                            price: p.price, 
+                            id: p.id 
+                        });
+                        if (p.id > threeDaysAgo) acc[name].isNew = true;
+                        if (!acc[name].image && p.image) acc[name].image = p.image;
+                        return acc;
+                    }, {});
+                    return Object.values(grouped);
+                };
+
+                const cloudMinuman = groupProducts(cloudProducts.filter(p => p.category === 'minuman'));
+                const cloudMakanan = groupProducts(cloudProducts.filter(p => p.category === 'makanan'));
+
+                setMenuData({ 
+                    minuman: [...initialMinuman, ...cloudMinuman], 
+                    makanan: [...initialMakanan, ...cloudMakanan] 
+                });
+                
+                // Optional: Update localStorage with cloud data to keep it offline-ready
+                localStorage.setItem('warung_custom_products', JSON.stringify(cloudProducts));
+            }
+        }, (error) => {
+            console.warn("Cloud Sync Offline or Not Configured:", error);
+        });
+
         window.addEventListener('storage', loadCustomProducts);
-        return () => window.removeEventListener('storage', loadCustomProducts);
+        return () => {
+            window.removeEventListener('storage', loadCustomProducts);
+            unsubscribe();
+        };
     }, []);
 
     useEffect(() => {

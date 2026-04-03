@@ -90,11 +90,29 @@ const AdminDashboard = ({ onBack }) => {
         window.dispatchEvent(new Event('storage'));
     };
 
-    const deleteProduct = (id) => {
+    const deleteProduct = async (id) => {
+        const productToDelete = customProducts.find(p => p.id === id);
+        if (!productToDelete) return;
+
+        if (!confirm(`Hapus ${productToDelete.name}?`)) return;
+
+        // If it has a cloud image, we could delete it from Blob (Optional but clean)
+        if (productToDelete.image && productToDelete.image.includes('vercel-storage.com')) {
+            try {
+                fetch('/api/upload', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: productToDelete.image })
+                });
+            } catch (err) { console.warn("Failed to delete cloud image", err); }
+        }
+
         const updatedProducts = customProducts.filter(p => p.id !== id);
         localStorage.setItem('warung_custom_products', JSON.stringify(updatedProducts));
         setCustomProducts(updatedProducts);
         window.dispatchEvent(new Event('storage'));
+        
+        setSyncStatus('Menu dihapus lokal. Klik SINKRON untuk update ke HP pembeli.');
     };
 
     const updateProductVariant = (id, updatedData) => {
@@ -221,14 +239,15 @@ const AdminDashboard = ({ onBack }) => {
                         {syncStatus && <span className='sync-msg'>{syncStatus}</span>}
                     </div>
                     <div className='sync-actions'>
-                        <p>Kirim perubahan menu dari Laptop ini agar muncul di HP pembeli & perangkat lain.</p>
+                        <p>Simpan perubahan (tambah/edit/hapus) ke Internet agar HP pembeli otomatis terupdate.</p>
                         <button 
                             className={`post-cloud-btn ${isSyncing ? 'loading' : ''}`} 
                             onClick={syncToCloud}
                             disabled={isSyncing}
                         >
-                            {isSyncing ? 'SINKRONISASI...' : 'POST (SINKRON KE CLOUD) 🚀'}
+                            {isSyncing ? 'SEDANG MENYIMPAN...' : 'SIMPAN & UPDATE CLOUD (SINKRON) 🚀'}
                         </button>
+                        <p style={{fontSize: '11px', marginTop: '10px', opacity: 0.7}}>* Produk yang kamu hapus juga akan hilang dari HP pembeli setelah klik tombol ini.</p>
                     </div>
                 </div>
 

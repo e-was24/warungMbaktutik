@@ -384,8 +384,13 @@ body {
     left: 12px;
     background: linear-gradient(135deg, #ff8a05, #ff5200);
     color: white;
-    padding: 4px 10px;
+    padding: 4px 12px;
     border-radius: 100px;
+    white-space: nowrap;
+    min-width: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     font-size: 10px;
     font-weight: 900;
     letter-spacing: 1px;

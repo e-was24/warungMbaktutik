@@ -23,7 +23,7 @@ const HomePage = ({ onAdminClick }) => {
   useEffect(() => {
     // Unified grouping logic with premium fallbacks
     const groupProducts = (items, type) => {
-      const threeDaysAgo = Date.now() - 3 * 24 * 60 * 60 * 1000;
+      const oneDayAgo = Date.now() - 24 * 60 * 60 * 1000;
       const grouped = items.reduce((acc, p) => {
         const name = p.name.toUpperCase();
         if (!acc[name]) {
@@ -33,6 +33,7 @@ const HomePage = ({ onAdminClick }) => {
             image: null,
             items: [],
             isNew: false,
+            newUntil: 0
           };
         }
         acc[name].items.push({
@@ -40,7 +41,12 @@ const HomePage = ({ onAdminClick }) => {
           price: p.price,
           id: p.id,
         });
-        if (p.id > threeDaysAgo) acc[name].isNew = true;
+        
+        if (p.id > oneDayAgo) {
+          acc[name].isNew = true;
+          const expiry = p.id + (24 * 60 * 60 * 1000);
+          if (expiry > acc[name].newUntil) acc[name].newUntil = expiry;
+        }
         
         // Prioritize actual external image URLs (Vercel Blob, etc)
         const hasExternalImage = p.image && (p.image.startsWith('http') || p.image.startsWith('data:'));
@@ -138,6 +144,15 @@ const HomePage = ({ onAdminClick }) => {
 
   const activeMenuData =
     activeTab === "minuman" ? menuData.minuman : menuData.makanan;
+
+  const getCountdown = (targetTime) => {
+    const diff = targetTime - currentTime.getTime();
+    if (diff <= 0) return null;
+    const h = Math.floor(diff / (1000 * 60 * 60));
+    const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const s = Math.floor((diff % (1000 * 60)) / 1000);
+    return `${h}j ${m}m ${s < 10 ? '0'+s : s}d`;
+  };
 
   const addToCart = (name, price) => {
     setCart((prev) => ({
@@ -318,7 +333,11 @@ const HomePage = ({ onAdminClick }) => {
                   className="card-main-img"
                 />
                 <div className="card-category-tag">{section.category}</div>
-                {section.isNew && <div className="new-product-badge">NEW</div>}
+                {section.isNew && getCountdown(section.newUntil) && (
+                  <div className="new-product-badge">
+                    NEW • {getCountdown(section.newUntil)}
+                  </div>
+                )}
               </div>
 
               <div className="card-content">

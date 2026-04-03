@@ -199,7 +199,8 @@ const AdminDashboard = ({ onBack }) => {
 
             if (!response.ok) {
                 const errData = await response.json();
-                throw new Error(errData.error || 'Gagal sync menu');
+                const diag = `\n\nPesan: ${errData.message || 'Error'}\nToken: ${errData.token_check || '?'}`;
+                throw new Error(diag);
             }
 
             setSyncStatus('Berhasil di-Post! Foto & Menu Aman ✅');
@@ -207,8 +208,8 @@ const AdminDashboard = ({ onBack }) => {
             setTimeout(() => setSyncStatus(''), 5000);
         } catch (error) {
             console.error("Sync Error:", error);
-            setSyncStatus(`Gagal: ${error.message} ❌`);
-            alert(`Gagal Sinkron: ${error.message}${error.details ? `\nDetail: ${error.details}` : ''}`);
+            setSyncStatus(`Gagal Sync ❌`);
+            alert(`SINKRONISASI GAGAL!${error.message}`);
         } finally {
             setIsSyncing(false);
         }

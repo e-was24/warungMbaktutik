@@ -9,6 +9,9 @@ import seblakSosisImg from '../assets/seblak_sosis.png'
 import seblakSpesialImg from '../assets/seblak_spesial.png'
 import seblakBlengerImg from '../assets/seblak_blenger.png'
 
+import drinkHeroBg from '../assets/welcome_bg.png'
+import foodHeroBg from '../assets/seblak_hero.png'
+
 // KONFIGURASI NOMOR WHATSAPP (Diambil dari file .env)
 const WHATSAPP_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || '6281217819691';
 
@@ -353,6 +356,10 @@ const HomePage = ({ onAdminClick }) => {
             </header>
 
             <section className='premium-hero'>
+                <div 
+                    className='hero-bg-faded' 
+                    style={{ backgroundImage: `url(${activeTab === 'minuman' ? drinkHeroBg : foodHeroBg})` }}
+                ></div>
                 <div className='hero-badge'>
                     {activeTab === 'minuman' ? 'Fresh Snacks & Drinks' : 'Spicy & Authentic Seblak'}
                 </div>

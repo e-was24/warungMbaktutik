@@ -1,6 +1,43 @@
 import React, { useState, useEffect } from 'react';
 import './AdminDashboard.css';
 
+// Default Menu Data for Seeding
+const DEFAULT_MENU_DATA = [
+    // Minuman
+    { name: 'LEMON TEA', price: 5000, variant: '', category: 'minuman', id: 'def-1' },
+    { name: 'LYCHEE TEA', price: 5000, variant: '', category: 'minuman', id: 'def-2' },
+    { name: 'MANGO TEA', price: 5000, variant: '', category: 'minuman', id: 'def-3' },
+    { name: 'STRAWBERRY TEA', price: 5000, variant: '', category: 'minuman', id: 'def-4' },
+    { name: 'GRAPE TEA', price: 5000, variant: '', category: 'minuman', id: 'def-5' },
+    { name: 'MELON TEA', price: 5000, variant: '', category: 'minuman', id: 'def-6' },
+    { name: 'YAKULT STRAWBERRY', price: 8000, variant: '', category: 'minuman', id: 'def-7' },
+    { name: 'YAKULT ORANGE', price: 8000, variant: '', category: 'minuman', id: 'def-8' },
+    { name: 'YAKULT GRAPE', price: 8000, variant: '', category: 'minuman', id: 'def-9' },
+    { name: 'YAKULT LYCHEE', price: 8000, variant: '', category: 'minuman', id: 'def-10' },
+    { name: 'YAKULT MELON', price: 8000, variant: '', category: 'minuman', id: 'def-11' },
+    { name: 'ES TELER CREAMY', price: 10000, variant: '', category: 'minuman', id: 'def-12' },
+    { name: 'MOJITO STRAWBERRY', price: 8000, variant: '', category: 'minuman', id: 'def-13' },
+    { name: 'MOJITO LEMON', price: 8000, variant: '', category: 'minuman', id: 'def-14' },
+    { name: 'MOJITO MELON', price: 8000, variant: '', category: 'minuman', id: 'def-15' },
+    { name: 'MOJITO LYCHEE', price: 8000, variant: '', category: 'minuman', id: 'def-16' },
+    { name: 'MOJITO ORANGE', price: 8000, variant: '', category: 'minuman', id: 'def-17' },
+    { name: 'MOJITO GRAPE', price: 8000, variant: '', category: 'minuman', id: 'def-18' },
+    { name: 'ALPUKAT KOCOK ORIGINAL', price: 10000, variant: '', category: 'minuman', id: 'def-19' },
+    { name: 'ALPUKAT KOCOK MILO', price: 10000, variant: '', category: 'minuman', id: 'def-20' },
+    { name: 'ALPUKAT KOCOK + KEJU BERUTAL', price: 10000, variant: '', category: 'minuman', id: 'def-21' },
+    { name: 'ALPUKAT KOCOK + COKLAT + KEJU', price: 10000, variant: '', category: 'minuman', id: 'def-22' },
+    { name: 'ALPUKAT KOCOK + COKLAT PARUT', price: 10000, variant: '', category: 'minuman', id: 'def-23' },
+    // Makanan (Seblak)
+    { name: 'SEBLAK SOSIS', price: 10000, variant: 'REGULER', category: 'makanan', id: 'def-24' },
+    { name: 'SEBLAK BAKSO', price: 10000, variant: 'REGULER', category: 'makanan', id: 'def-25' },
+    { name: 'SEBLAK HEMAT', price: 10000, variant: 'REGULER', category: 'makanan', id: 'def-26' },
+    { name: 'SEBLAK BIASA', price: 12000, variant: 'REGULER', category: 'makanan', id: 'def-27' },
+    { name: 'SEBLAK CUANKI 🔥', price: 15000, variant: 'PREMIUM', category: 'makanan', id: 'def-28' },
+    { name: 'SEBLAK SPESIAL', price: 15000, variant: 'PREMIUM', category: 'makanan', id: 'def-29' },
+    { name: 'SEBLAK ISTIMEWA', price: 20000, variant: 'PREMIUM', category: 'makanan', id: 'def-30' },
+    { name: 'SEBLAK BLENGER', price: 30000, variant: 'EXTRA', category: 'makanan', id: 'def-31' },
+];
+
 const AdminDashboard = ({ onBack }) => {
     const [orders, setOrders] = useState([]);
     const [customProducts, setCustomProducts] = useState([]);
@@ -141,10 +178,36 @@ const AdminDashboard = ({ onBack }) => {
         loadData();
     };
 
+    const handleImportDefaults = () => {
+        if (!confirm('Impor menu awal ke daftar manajemen? Ini akan memindahkan menu default ke sistem kartu agar bisa kamu edit harganya.')) return;
+        
+        // Remove duplicates based on name and variant
+        const newItems = DEFAULT_MENU_DATA.filter(def => 
+            !customProducts.some(p => p.name === def.name && p.variant === def.variant)
+        );
+
+        if (newItems.length === 0) {
+            alert('Semua menu awal sudah ada d daftar management kamu!');
+            return;
+        }
+
+        const updatedProducts = [...customProducts, ...newItems.map(item => ({
+            ...item, 
+            id: Date.now() + Math.floor(Math.random() * 1000)
+        }))];
+        
+        localStorage.setItem('warung_custom_products', JSON.stringify(updatedProducts));
+        setCustomProducts(updatedProducts);
+        window.dispatchEvent(new Event('storage'));
+        setSyncStatus('Menu awal berhasil diimpor! Jangan lupa klik SINKRON.');
+    };
+
     const clearData = () => {
-        if (window.confirm('Hapus semua riwayat pesanan?')) {
-            localStorage.removeItem('warung_orders');
+        if (confirm('Hapus SEMUA data produk & pesanan? Tindakan ini tidak bisa dibatalkan.')) {
+            localStorage.clear();
             loadData();
+            window.dispatchEvent(new Event('storage'));
+            setSyncStatus('Semua data dibersihkan.');
         }
     };
 
@@ -246,18 +309,21 @@ const AdminDashboard = ({ onBack }) => {
                 {/* Cloud Sync Tool */}
                 <div className='admin-section cloud-sync-box'>
                     <div className='sync-header'>
-                        <h2>Cloud Synchronization</h2>
+                        <h2>Cloud Synchronization & Tools</h2>
                         {syncStatus && <span className='sync-msg'>{syncStatus}</span>}
                     </div>
                     <div className='sync-actions'>
                         <p>Simpan perubahan (tambah/edit/hapus) ke Internet agar HP pembeli otomatis terupdate.</p>
-                        <button 
-                            className={`post-cloud-btn ${isSyncing ? 'loading' : ''}`} 
-                            onClick={syncToCloud}
-                            disabled={isSyncing}
-                        >
-                            {isSyncing ? 'SEDANG MENYIMPAN...' : 'SIMPAN & UPDATE CLOUD (SINKRON) 🚀'}
-                        </button>
+                        <div className='btn-group-sync'>
+                            <button 
+                                className={`post-cloud-btn ${isSyncing ? 'loading' : ''}`} 
+                                onClick={syncToCloud}
+                                disabled={isSyncing}
+                            >
+                                {isSyncing ? 'SEDANG MENYIMPAN...' : 'SIMPAN & UPDATE CLOUD (SINKRON) 🚀'}
+                            </button>
+                            <button className='import-def-btn' onClick={handleImportDefaults}>MUAT MENU AWAL (TEA/SEBLAK) 📦</button>
+                        </div>
                         <p style={{fontSize: '11px', marginTop: '10px', opacity: 0.7}}>* Produk yang kamu hapus juga akan hilang dari HP pembeli setelah klik tombol ini.</p>
                         {isSyncing && (
                             <button 

@@ -854,3 +854,47 @@
         background: #f1f5f9;
     }
 }
+
+/* --- Cloud Sync & Seed Tools --- */
+.btn-group-sync {
+    display: flex;
+    gap: 12px;
+    margin-top: 15px;
+    flex-wrap: wrap;
+}
+
+.import-def-btn {
+    background: rgba(139, 92, 246, 0.1);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    color: #a78bfa;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.import-def-btn:hover {
+    background: rgba(139, 92, 246, 0.2);
+    transform: translateY(-2px);
+    border-color: #a78bfa;
+}
+
+.post-cloud-btn {
+    flex: 2;
+    min-width: 250px;
+}
+
+@media (max-width: 768px) {
+    .btn-group-sync {
+        flex-direction: column;
+    }
+    .import-def-btn, .post-cloud-btn {
+        width: 100%;
+        margin: 0;
+    }
+}

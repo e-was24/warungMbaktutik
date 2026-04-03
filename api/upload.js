@@ -27,11 +27,12 @@ export default async function handler(req, res) {
   }
 
   try {
-    const filename = req.headers['x-filename'] || 'upload.png';
+    const originalFilename = req.headers['x-filename'] || 'product.png';
+    const filename = `warung-${Date.now()}-${originalFilename}`;
+    
     const blob = await put(filename, req, {
       access: 'public',
-      addRandomSuffix: false,
-      allowOverwrite: true
+      addRandomSuffix: true,
     });
 
     return res.status(200).json(blob);

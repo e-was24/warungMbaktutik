@@ -1,5 +1,4 @@
-import { doc, setDoc, collection, writeBatch } from "firebase/firestore";
-import { db } from "../firebase";
+import React, { useState, useEffect } from 'react';
 import './AdminDashboard.css';
 
 const AdminDashboard = ({ onBack }) => {
@@ -138,21 +137,19 @@ const AdminDashboard = ({ onBack }) => {
         setSyncStatus('Sedang Mengunggah...');
         
         try {
-            const batch = writeBatch(db);
-            
-            // Upload products
-            customProducts.forEach(product => {
-                const docRef = doc(db, "custom_products", product.id.toString());
-                batch.set(docRef, product);
+            const response = await fetch('/api/sync', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ products: customProducts })
             });
-            
-            await batch.commit();
+
+            if (!response.ok) throw new Error('Gagal upload');
+
             setSyncStatus('Berhasil di-Post! ✅');
             setTimeout(() => setSyncStatus(''), 3000);
         } catch (error) {
             console.error("Sync Error:", error);
             setSyncStatus('Gagal Sinkron ❌');
-            alert('Gagal Sinkron: Pastikan kamu sudah memasukkan Firebase Config di .env');
         } finally {
             setIsSyncing(false);
         }

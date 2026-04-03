@@ -12,7 +12,7 @@ import seblakBlengerImg from '../assets/seblak_blenger.png'
 // KONFIGURASI NOMOR WHATSAPP (Diambil dari file .env)
 const WHATSAPP_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || '6281217819691';
 
-const HomePage = () => {
+const HomePage = ({ onAdminClick }) => {
     const [cart, setCart] = useState({});
     const [scrolled, setScrolled] = useState(false);
     const [activeTab, setActiveTab] = useState('minuman'); // 'minuman' or 'makanan'
@@ -174,6 +174,18 @@ const HomePage = () => {
         message += `\n*TOTAL: Rp ${getTotalPrice().toLocaleString('id-ID')}*`;
         
         const encodedMessage = encodeURIComponent(message);
+        
+        // Save to localStorage (Admin Tracking)
+        const newOrder = {
+            timestamp: new Date().toISOString(),
+            customer: customerInfo,
+            items: Object.values(cart),
+            total: getTotalPrice()
+        };
+        const existingOrders = JSON.parse(localStorage.getItem('warung_orders') || '[]');
+        existingOrders.push(newOrder);
+        localStorage.setItem('warung_orders', JSON.stringify(existingOrders));
+
         window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
         setIsCheckoutOpen(false);
     };
@@ -307,7 +319,10 @@ const HomePage = () => {
                 <div className='footer-line'></div>
                 <div className='footer-brand'>WARUNG MBK TUTIK</div>
                 <div className='footer-contact'>+{WHATSAPP_NUMBER}</div>
-                <div className='footer-legal'>&copy; 2026 Crafted with Excellence</div>
+                <div className='footer-legal'>
+                    &copy; 2026 Crafted with Excellence 
+                    <span className='admin-trigger' onClick={onAdminClick}> • Admin</span>
+                </div>
             </footer>
 
             {/* Checkout Modal */}

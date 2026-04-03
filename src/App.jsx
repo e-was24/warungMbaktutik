@@ -1,18 +1,20 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
+import { useState, useEffect } from 'react'
 import WelcomePopup from './components/WelcomePopup'
 import HomePage from './components/HomePage'
+import AdminDashboard from './components/AdminDashboard'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [isAdminView, setIsAdminView] = useState(false);
 
   return (
     <>
       <WelcomePopup />
-      <HomePage />
+      {isAdminView ? (
+        <AdminDashboard onBack={() => setIsAdminView(false)} />
+      ) : (
+        <HomePage onAdminClick={() => setIsAdminView(true)} />
+      )}
     </>
   )
 }

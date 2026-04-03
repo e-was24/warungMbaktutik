@@ -20,15 +20,7 @@ const HomePage = ({ onAdminClick }) => {
     const [customerInfo, setCustomerInfo] = useState({ name: '', address: '' });
     const [adminClickCount, setAdminClickCount] = useState(0);
 
-    useEffect(() => {
-        const handleScroll = () => {
-            setScrolled(window.scrollY > 50);
-        };
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
-
-    const minumanData = [
+    const initialMinuman = [
         {
             category: 'TEA SERIES',
             id: 'tea',
@@ -91,7 +83,7 @@ const HomePage = ({ onAdminClick }) => {
         }
     ];
 
-    const makananData = [
+    const initialMakanan = [
         {
             category: 'SEBLAK REGULER',
             id: 'seblak-reg',
@@ -124,7 +116,55 @@ const HomePage = ({ onAdminClick }) => {
         }
     ];
 
-    const activeMenuData = activeTab === 'minuman' ? minumanData : makananData;
+    const [menuData, setMenuData] = useState({ minuman: initialMinuman, makanan: initialMakanan });
+
+    useEffect(() => {
+        const loadCustomProducts = () => {
+            const custom = JSON.parse(localStorage.getItem('warung_custom_products') || '[]');
+            
+            // Format custom products to match the grid structure
+            // We'll group them into a 'PRODUK BARU' category for now
+            const customMinumanItems = custom.filter(p => p.category === 'minuman');
+            const customMakananItems = custom.filter(p => p.category === 'makanan');
+
+            const updatedMinuman = [...initialMinuman];
+            if (customMinumanItems.length > 0) {
+                updatedMinuman.push({
+                    category: 'PRODUK BARU',
+                    id: 'custom-minuman',
+                    image: 'https://images.unsplash.com/photo-1544787210-2211d74fc599?auto=format&fit=crop&q=80&w=800',
+                    items: customMinumanItems
+                });
+            }
+
+            const updatedMakanan = [...initialMakanan];
+            if (customMakananItems.length > 0) {
+                updatedMakanan.push({
+                    category: 'PRODUK BARU',
+                    id: 'custom-makanan',
+                    image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=800',
+                    items: customMakananItems
+                });
+            }
+
+            setMenuData({ minuman: updatedMinuman, makanan: updatedMakanan });
+        };
+
+        loadCustomProducts();
+        window.addEventListener('storage', loadCustomProducts);
+        return () => window.removeEventListener('storage', loadCustomProducts);
+    }, []);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setScrolled(window.scrollY > 50);
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+
+    const activeMenuData = activeTab === 'minuman' ? menuData.minuman : menuData.makanan;
 
     const addToCart = (name, price) => {
         setCart(prev => ({

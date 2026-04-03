@@ -124,6 +124,7 @@ const HomePage = ({ onAdminClick }) => {
             
             // Group by name for the shop display
             const groupProducts = (items) => {
+                const threeDaysAgo = Date.now() - (3 * 24 * 60 * 60 * 1000);
                 const grouped = items.reduce((acc, p) => {
                     const name = p.name.toUpperCase();
                     if (!acc[name]) {
@@ -131,7 +132,8 @@ const HomePage = ({ onAdminClick }) => {
                             category: name, 
                             id: `custom-${name}`, 
                             image: p.image || null,
-                            items: [] 
+                            items: [],
+                            isNew: false
                         };
                     }
                     acc[name].items.push({ 
@@ -139,6 +141,8 @@ const HomePage = ({ onAdminClick }) => {
                         price: p.price, 
                         id: p.id 
                     });
+                    // Mark as NEW if added within last 3 days
+                    if (p.id > threeDaysAgo) acc[name].isNew = true;
                     // Use the first image found for the group
                     if (!acc[name].image && p.image) acc[name].image = p.image;
                     return acc;
@@ -313,6 +317,7 @@ const HomePage = ({ onAdminClick }) => {
                                     <div className='card-img-placeholder'>{section.category[0]}</div>
                                 )}
                                 <div className='card-category-tag'>{section.category}</div>
+                                {section.isNew && <div className='new-product-badge'>NEW</div>}
                             </div>
                             
                             <div className='card-content'>

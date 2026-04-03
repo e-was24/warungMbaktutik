@@ -83,7 +83,7 @@ const HomePage = ({ onAdminClick }) => {
         const isInitialized = cloudData.isInitialized || false;
 
         if (Array.isArray(cloudProducts)) {
-          const groupProducts = (items) => {
+          const groupProducts = (items, type) => {
             const threeDaysAgo = Date.now() - 3 * 24 * 60 * 60 * 1000;
             const grouped = items.reduce((acc, p) => {
               const name = p.name.toUpperCase();
@@ -91,7 +91,7 @@ const HomePage = ({ onAdminClick }) => {
                 acc[name] = {
                   category: name,
                   id: `custom-${name}`,
-                  image: p.image || null,
+                  image: p.image || (type === "minuman" ? drinkHeroBg : foodHeroBg),
                   items: [],
                   isNew: false,
                 };
@@ -102,7 +102,13 @@ const HomePage = ({ onAdminClick }) => {
                 id: p.id,
               });
               if (p.id > threeDaysAgo) acc[name].isNew = true;
-              if (!acc[name].image && p.image) acc[name].image = p.image;
+              
+              // Handle relative/broken paths or empty images
+              const isValidImage = p.image && (p.image.startsWith('http') || p.image.startsWith('data:'));
+              if (!acc[name].image || !acc[name].image.startsWith('http')) {
+                if (isValidImage) acc[name].image = p.image;
+              }
+              
               return acc;
             }, {});
             return Object.values(grouped);
@@ -110,9 +116,11 @@ const HomePage = ({ onAdminClick }) => {
 
           const cloudMinuman = groupProducts(
             cloudProducts.filter((p) => p.category === "minuman"),
+            "minuman"
           );
           const cloudMakanan = groupProducts(
             cloudProducts.filter((p) => p.category === "makanan"),
+            "makanan"
           );
 
           // If Cloud is initialized, it replaces the hardcoded menu entirely
@@ -459,7 +467,7 @@ const HomePage = ({ onAdminClick }) => {
           </span>
         </div>
         <div className="footer-legal">
-          &copy; Lanova Tech. all rights reserved.
+          &copy; {new Date().getFullYear()} Lanova Tech. all rights reserved.
         </div>
       </footer>
 

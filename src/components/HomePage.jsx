@@ -21,44 +21,55 @@ const HomePage = ({ onAdminClick }) => {
   });
 
   useEffect(() => {
+    // Unified grouping logic with premium fallbacks
+    const groupProducts = (items, type) => {
+      const threeDaysAgo = Date.now() - 3 * 24 * 60 * 60 * 1000;
+      const grouped = items.reduce((acc, p) => {
+        const name = p.name.toUpperCase();
+        if (!acc[name]) {
+          acc[name] = {
+            category: name,
+            id: `custom-${name}`,
+            image: null,
+            items: [],
+            isNew: false,
+          };
+        }
+        acc[name].items.push({
+          name: p.variant ? `${name} (${p.variant.toUpperCase()})` : name,
+          price: p.price,
+          id: p.id,
+        });
+        if (p.id > threeDaysAgo) acc[name].isNew = true;
+        
+        // Prioritize actual external image URLs (Vercel Blob, etc)
+        const hasExternalImage = p.image && (p.image.startsWith('http') || p.image.startsWith('data:'));
+        if (hasExternalImage) {
+          acc[name].image = p.image;
+        }
+        
+        return acc;
+      }, {});
+      
+      // Final pass: Apply category fallbacks for groups still missing a custom image
+      return Object.values(grouped).map(group => ({
+        ...group,
+        image: group.image || (type === "minuman" ? drinkHeroBg : foodHeroBg)
+      }));
+    };
+
     const loadCustomProducts = () => {
       const custom = JSON.parse(
         localStorage.getItem("warung_custom_products") || "[]",
       );
 
-      // Group by name for the shop display
-      const groupProducts = (items) => {
-        const threeDaysAgo = Date.now() - 3 * 24 * 60 * 60 * 1000;
-        const grouped = items.reduce((acc, p) => {
-          const name = p.name.toUpperCase();
-          if (!acc[name]) {
-            acc[name] = {
-              category: name,
-              id: `custom-${name}`,
-              image: p.image || null,
-              items: [],
-              isNew: false,
-            };
-          }
-          acc[name].items.push({
-            name: p.variant ? `${name} (${p.variant.toUpperCase()})` : name,
-            price: p.price,
-            id: p.id,
-          });
-          // Mark as NEW if added within last 3 days
-          if (p.id > threeDaysAgo) acc[name].isNew = true;
-          // Use the first image found for the group
-          if (!acc[name].image && p.image) acc[name].image = p.image;
-          return acc;
-        }, {});
-        return Object.values(grouped);
-      };
-
       const customMinuman = groupProducts(
         custom.filter((p) => p.category === "minuman"),
+        "minuman"
       );
       const customMakanan = groupProducts(
         custom.filter((p) => p.category === "makanan"),
+        "makanan"
       );
 
       setMenuData({
@@ -80,45 +91,8 @@ const HomePage = ({ onAdminClick }) => {
         const cloudProducts = Array.isArray(cloudData)
           ? cloudData
           : cloudData.products || [];
-        const isInitialized = cloudData.isInitialized || false;
 
         if (Array.isArray(cloudProducts)) {
-          const groupProducts = (items, type) => {
-            const threeDaysAgo = Date.now() - 3 * 24 * 60 * 60 * 1000;
-            const grouped = items.reduce((acc, p) => {
-              const name = p.name.toUpperCase();
-              if (!acc[name]) {
-                acc[name] = {
-                  category: name,
-                  id: `custom-${name}`,
-                  image: null,
-                  items: [],
-                  isNew: false,
-                };
-              }
-              acc[name].items.push({
-                name: p.variant ? `${name} (${p.variant.toUpperCase()})` : name,
-                price: p.price,
-                id: p.id,
-              });
-              if (p.id > threeDaysAgo) acc[name].isNew = true;
-              
-              // Only overwrite the placeholder if we find a REAL (external) image URL
-              const hasExternalImage = p.image && (p.image.startsWith('http') || p.image.startsWith('data:'));
-              if (hasExternalImage) {
-                acc[name].image = p.image;
-              }
-              
-              return acc;
-            }, {});
-            
-            // Final pass: Apply category fallbacks for groups still missing an image
-            return Object.values(grouped).map(group => ({
-              ...group,
-              image: group.image || (type === "minuman" ? drinkHeroBg : foodHeroBg)
-            }));
-          };
-
           const cloudMinuman = groupProducts(
             cloudProducts.filter((p) => p.category === "minuman"),
             "minuman"
@@ -128,7 +102,6 @@ const HomePage = ({ onAdminClick }) => {
             "makanan"
           );
 
-          // If Cloud is initialized, it replaces the hardcoded menu entirely
           setMenuData({
             minuman: cloudMinuman,
             makanan: cloudMakanan,

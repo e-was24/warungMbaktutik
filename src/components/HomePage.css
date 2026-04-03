@@ -24,7 +24,7 @@
         --p-glass-bg: rgba(255, 255, 255, 0.6);
         --p-glow: rgba(170, 59, 255, 0.1);
     }
-    
+
     .text-gradient {
         background: linear-gradient(135deg, var(--p-text) 0%, var(--p-accent) 100%) !important;
         -webkit-background-clip: text !important;
@@ -33,7 +33,7 @@
 
     .premium-cart-pill {
         background: rgba(255, 255, 255, 0.9) !important;
-        box-shadow: 0 20px 50px rgba(0,0,0,0.1) !important;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1) !important;
     }
 
     .pill-action-btn {
@@ -220,9 +220,9 @@ body {
 
 .premium-card:hover {
     transform: translateY(-8px);
-    background: rgba(255,255,255,0.05);
+    background: rgba(255, 255, 255, 0.05);
     border-color: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 30px 60px -20px rgba(0,0,0,0.5), 0 0 40px -10px var(--p-glow);
+    box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.5), 0 0 40px -10px var(--p-glow);
 }
 
 .card-visual-wrapper {
@@ -247,12 +247,16 @@ body {
     top: 20px;
     right: 20px;
     padding: 8px 18px;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(10px);
+    background: var(--p-glass-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--p-border);
     border-radius: 50px;
-    font-size: 12px;
-    font-weight: 800;
-    letter-spacing: 1px;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+    color: var(--p-accent);
+    text-transform: uppercase;
+    z-index: 10;
 }
 
 /* Card Content */
@@ -356,7 +360,7 @@ body {
 .p-remove {
     background: rgba(255, 255, 255, 0.1);
     color: white;
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .p-remove:hover {
@@ -397,7 +401,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
     z-index: 2000;
 }
 
@@ -488,13 +492,27 @@ body {
 
 /* Animations */
 @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(40px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @keyframes fadeInDown {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .fade-in-up {
@@ -511,15 +529,24 @@ body {
 }
 
 @media (max-width: 768px) {
-    .premium-nav { padding: 16px 20px; }
-    .hero-title { font-size: 42px; }
-    .premium-menu-grid { 
-        grid-template-columns: 1fr; 
+    .premium-nav {
+        padding: 16px 20px;
+    }
+
+    .hero-title {
+        font-size: 42px;
+    }
+
+    .premium-menu-grid {
+        grid-template-columns: 1fr;
         padding: 0 20px;
         gap: 24px;
     }
-    .category-switcher { scale: 0.9; }
-    
+
+    .category-switcher {
+        scale: 0.9;
+    }
+
     .premium-hero {
         padding: 130px 20px 40px;
     }
@@ -533,14 +560,28 @@ body {
         bottom: 20px;
     }
 
-    .pill-info { gap: 12px; }
-    .pill-action-btn { padding: 10px 20px; }
+    .pill-info {
+        gap: 12px;
+    }
+
+    .pill-action-btn {
+        padding: 10px 20px;
+    }
 }
 
 @media (max-width: 480px) {
-    .hero-title { font-size: 34px; }
-    .nav-brand { font-size: 18px; }
-    .switch-btn { padding: 6px 12px; font-size: 13px; }
+    .hero-title {
+        font-size: 34px;
+    }
+
+    .nav-brand {
+        font-size: 18px;
+    }
+
+    .switch-btn {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
 }
 
 /* Checkout Modal Styles */
@@ -567,18 +608,30 @@ body {
     width: 100%;
     max-width: 500px;
     padding: 32px;
-    box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5);
     animation: scaleUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes scaleUp {
-    from { opacity: 0; transform: scale(0.9); }
-    to { opacity: 1; transform: scale(1); }
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 .modal-header {
@@ -620,7 +673,7 @@ body {
     color: var(--p-text-muted);
 }
 
-.form-group input, 
+.form-group input,
 .form-group textarea {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--p-border);
@@ -632,7 +685,7 @@ body {
     transition: all 0.3s ease;
 }
 
-.form-group input:focus, 
+.form-group input:focus,
 .form-group textarea:focus {
     outline: none;
     border-color: var(--p-accent);
@@ -681,7 +734,7 @@ body {
 .submit-order-btn:hover {
     background: var(--p-accent-deep);
     transform: translateY(-2px);
-    box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
 }
 
 @media (max-width: 500px) {
@@ -689,4 +742,3 @@ body {
         padding: 24px;
     }
 }
-

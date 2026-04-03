@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
 import './WelcomePopup.css';
+import welcomeBg from '../assets/welcome_bg.png';
 
 const WelcomePopup = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -50,6 +50,7 @@ const WelcomePopup = () => {
   return (
     <div className="welcome-overlay">
       <div className="welcome-modal">
+        <div className="welcome-bg-image" style={{ backgroundImage: `url(${welcomeBg})` }}></div>
         <div className="welcome-content">
           <div className="welcome-logo">
             <svg viewBox="0 0 100 100" className="logo-svg">
@@ -94,8 +95,8 @@ const WelcomePopup = () => {
           </h1>
           
           <p className="fade-in-text">
-            Sajian istimewa dengan cita rasa autentik. 
-            Selamat datang di pengalaman kuliner terbaik kami.
+            Cita Rasa Autentik<br/>
+            Dalam Setiap Gelas
           </p>
           
           {isMobile ? (

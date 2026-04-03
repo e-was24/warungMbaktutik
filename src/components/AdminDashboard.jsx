@@ -7,6 +7,7 @@ const AdminDashboard = ({ onBack }) => {
     const [stats, setStats] = useState({ totalOrders: 0, successOrders: 0, totalRevenue: 0, cancelledOrders: 0 });
     const [newProduct, setNewProduct] = useState({ name: '', price: '', category: 'minuman', variant: '', image: null });
     const [imagePreview, setImagePreview] = useState(null);
+    const [editingVariant, setEditingVariant] = useState(null); // { id, price, variant }
 
     useEffect(() => {
         loadData();
@@ -91,6 +92,17 @@ const AdminDashboard = ({ onBack }) => {
         const updatedProducts = customProducts.filter(p => p.id !== id);
         localStorage.setItem('warung_custom_products', JSON.stringify(updatedProducts));
         setCustomProducts(updatedProducts);
+        window.dispatchEvent(new Event('storage'));
+    };
+
+    const updateProductVariant = (id, updatedData) => {
+        const updatedProducts = customProducts.map(p => {
+            if (p.id === id) return { ...p, ...updatedData };
+            return p;
+        });
+        localStorage.setItem('warung_custom_products', JSON.stringify(updatedProducts));
+        setCustomProducts(updatedProducts);
+        setEditingVariant(null);
         window.dispatchEvent(new Event('storage'));
     };
 
@@ -248,11 +260,34 @@ const AdminDashboard = ({ onBack }) => {
                                     <div className='gp-variants'>
                                         {variants.map(v => (
                                             <div key={v.id} className='gp-variant-row'>
-                                                <div className='v-label'>
-                                                    {v.variant && <span className='v-name'>{v.variant}</span>}
-                                                    <span className='v-price'>Rp {v.price.toLocaleString('id-ID')}</span>
-                                                </div>
-                                                <button className='delete-v-btn' onClick={() => deleteProduct(v.id)}>&times;</button>
+                                                {editingVariant && editingVariant.id === v.id ? (
+                                                    <div className='inline-edit-form'>
+                                                        <input 
+                                                            type='text' 
+                                                            value={editingVariant.variant} 
+                                                            placeholder='Nama Label (Kecil/Besar)'
+                                                            onChange={e => setEditingVariant({...editingVariant, variant: e.target.value})}
+                                                        />
+                                                        <input 
+                                                            type='number' 
+                                                            value={editingVariant.price} 
+                                                            onChange={e => setEditingVariant({...editingVariant, price: e.target.value})}
+                                                        />
+                                                        <button className='save-v-btn' onClick={() => updateProductVariant(v.id, { variant: editingVariant.variant, price: parseInt(editingVariant.price) })}>✓</button>
+                                                        <button className='cancel-v-btn' onClick={() => setEditingVariant(null)}>&times;</button>
+                                                    </div>
+                                                ) : (
+                                                    <>
+                                                        <div className='v-label' onClick={() => setEditingVariant({ id: v.id, variant: v.variant || '', price: v.price })}>
+                                                            <span className='v-name'>{v.variant || 'Klik untuk beri nama'}</span>
+                                                            <span className='v-price'>Rp {v.price.toLocaleString('id-ID')}</span>
+                                                        </div>
+                                                        <div className='v-actions'>
+                                                            <button className='edit-v-btn' onClick={() => setEditingVariant({ id: v.id, variant: v.variant || '', price: v.price })}>✎</button>
+                                                            <button className='delete-v-btn' onClick={() => deleteProduct(v.id)}>&times;</button>
+                                                        </div>
+                                                    </>
+                                                )}
                                             </div>
                                         ))}
                                     </div>

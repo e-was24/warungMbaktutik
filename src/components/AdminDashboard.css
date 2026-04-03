@@ -330,6 +330,28 @@
 .gp-info {
     display: flex;
     flex-direction: column;
+    flex: 1;
+}
+
+.gp-edit-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #9ca3af;
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.gp-edit-btn:hover {
+    background: var(--p-accent);
+    color: white;
+    border-color: var(--p-accent);
+    transform: rotate(15deg) scale(1.1);
 }
 
 .gp-name {

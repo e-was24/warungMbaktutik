@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import './WelcomePopup.css';
 import welcomeBg from '../assets/welcome_bg.png';
 

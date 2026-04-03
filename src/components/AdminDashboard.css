@@ -144,10 +144,12 @@
 }
 
 .add-product-large-form {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 32px;
-    padding: 32px;
+    padding: 28px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
 }
 
 .form-main {
@@ -164,9 +166,10 @@
     position: relative;
     width: 160px;
     height: 160px;
-    border-radius: 20px;
+    border-radius: 24px;
     overflow: hidden;
-    border: 2px solid var(--p-accent);
+    border: 2px solid rgba(170, 59, 255, 0.3);
+    box-shadow: 0 8px 16px rgba(170, 59, 255, 0.1);
 }
 
 .preview-container img {
@@ -242,10 +245,18 @@
 }
 
 .grouped-product-card {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 24px;
-    padding: 20px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 28px;
+    padding: 24px;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.grouped-product-card:hover {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.12);
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
 }
 
 .gp-header {
@@ -314,14 +325,23 @@
 }
 
 .delete-v-btn {
-    background: rgba(255,77,77,0.1);
-    color: #ff4d4d;
+    background: rgba(244, 63, 94, 0.1);
+    color: #f43f5e;
     border: none;
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
     cursor: pointer;
-    font-size: 12px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.delete-v-btn:hover {
+    background: #f43f5e;
+    color: white;
 }
 
 .orders-cards-grid {
@@ -393,13 +413,15 @@
 }
 
 .bg-success {
-    background: rgba(34, 197, 94, 0.1);
-    color: #22c55e;
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
 .bg-danger {
-    background: rgba(239, 68, 68, 0.1);
-    color: #ef4444;
+    background: rgba(244, 63, 94, 0.1);
+    color: #f43f5e;
+    border: 1px solid rgba(244, 63, 94, 0.2);
 }
 
 .o-address {
@@ -428,11 +450,11 @@
 }
 
 .o-item-qty {
-    background: rgba(255, 255, 255, 0.05);
-    padding: 2px 8px;
-    border-radius: 6px;
-    font-weight: 700;
-    font-size: 12px;
+    background: rgba(170, 59, 255, 0.1);
+    padding: 3px 10px;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 11px;
     color: #aa3bff;
 }
 

@@ -91,7 +91,7 @@ const HomePage = ({ onAdminClick }) => {
                 acc[name] = {
                   category: name,
                   id: `custom-${name}`,
-                  image: p.image || (type === "minuman" ? drinkHeroBg : foodHeroBg),
+                  image: null,
                   items: [],
                   isNew: false,
                 };
@@ -103,15 +103,20 @@ const HomePage = ({ onAdminClick }) => {
               });
               if (p.id > threeDaysAgo) acc[name].isNew = true;
               
-              // Handle relative/broken paths or empty images
-              const isValidImage = p.image && (p.image.startsWith('http') || p.image.startsWith('data:'));
-              if (!acc[name].image || !acc[name].image.startsWith('http')) {
-                if (isValidImage) acc[name].image = p.image;
+              // Only overwrite the placeholder if we find a REAL (external) image URL
+              const hasExternalImage = p.image && (p.image.startsWith('http') || p.image.startsWith('data:'));
+              if (hasExternalImage) {
+                acc[name].image = p.image;
               }
               
               return acc;
             }, {});
-            return Object.values(grouped);
+            
+            // Final pass: Apply category fallbacks for groups still missing an image
+            return Object.values(grouped).map(group => ({
+              ...group,
+              image: group.image || (type === "minuman" ? drinkHeroBg : foodHeroBg)
+            }));
           };
 
           const cloudMinuman = groupProducts(
@@ -328,17 +333,11 @@ const HomePage = ({ onAdminClick }) => {
           >
             <div className={`premium-card ${section.id}-theme`}>
               <div className="card-visual-wrapper">
-                {section.image ? (
-                  <img
-                    src={section.image}
-                    alt={section.category}
-                    className="card-main-img"
-                  />
-                ) : (
-                  <div className="card-img-placeholder">
-                    {section.category[0]}
-                  </div>
-                )}
+                <img
+                  src={section.image}
+                  alt={section.category}
+                  className="card-main-img"
+                />
                 <div className="card-category-tag">{section.category}</div>
                 {section.isNew && <div className="new-product-badge">NEW</div>}
               </div>

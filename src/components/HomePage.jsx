@@ -16,6 +16,8 @@ const HomePage = () => {
     const [cart, setCart] = useState({});
     const [scrolled, setScrolled] = useState(false);
     const [activeTab, setActiveTab] = useState('minuman'); // 'minuman' or 'makanan'
+    const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+    const [customerInfo, setCustomerInfo] = useState({ name: '', address: '' });
 
     useEffect(() => {
         const handleScroll = () => {
@@ -158,7 +160,14 @@ const HomePage = () => {
 
     const sendToWhatsApp = () => {
         const phoneNumber = WHATSAPP_NUMBER;
-        let message = '*Pesanan Baru - Warung Mbk Tutik*\n\n';
+        let message = `*Pesanan Baru - Warung Mbk Tutik*\n`;
+        message += `----------------------------\n`;
+        message += `👤 *Nama:* ${customerInfo.name}\n`;
+        if (customerInfo.address) {
+            message += `📍 *Alamat:* ${customerInfo.address}\n`;
+        }
+        message += `----------------------------\n\n`;
+        
         Object.values(cart).forEach(item => {
             message += `- ${item.name} (${item.quantity}x) : Rp ${(item.price * item.quantity).toLocaleString('id-ID')}\n`;
         });
@@ -166,6 +175,16 @@ const HomePage = () => {
         
         const encodedMessage = encodeURIComponent(message);
         window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
+        setIsCheckoutOpen(false);
+    };
+
+    const handleCheckoutSubmit = (e) => {
+        e.preventDefault();
+        if (!customerInfo.name.trim()) {
+            alert('Mohon masukkan nama Anda');
+            return;
+        }
+        sendToWhatsApp();
     };
 
     return (
@@ -278,7 +297,7 @@ const HomePage = () => {
                             <span className='pill-amount'>Rp {getTotalPrice().toLocaleString('id-ID')}</span>
                         </div>
                     </div>
-                    <button className='pill-action-btn' onClick={sendToWhatsApp}>
+                    <button className='pill-action-btn' onClick={() => setIsCheckoutOpen(true)}>
                         Check Out <span className='wa-icon'>↗</span>
                     </button>
                 </div>
@@ -290,6 +309,45 @@ const HomePage = () => {
                 <div className='footer-contact'>+{WHATSAPP_NUMBER}</div>
                 <div className='footer-legal'>&copy; 2026 Crafted with Excellence</div>
             </footer>
+
+            {/* Checkout Modal */}
+            {isCheckoutOpen && (
+                <div className='checkout-modal-overlay' onClick={() => setIsCheckoutOpen(false)}>
+                    <div className='checkout-modal-card' onClick={e => e.stopPropagation()}>
+                        <div className='modal-header'>
+                            <h2>Konfirmasi Pesanan</h2>
+                            <button className='close-modal' onClick={() => setIsCheckoutOpen(false)}>&times;</button>
+                        </div>
+                        <form onSubmit={handleCheckoutSubmit} className='checkout-form'>
+                            <div className='form-group'>
+                                <label>Nama Pembeli *</label>
+                                <input 
+                                    type='text' 
+                                    placeholder='Masukkan nama lengkap'
+                                    required
+                                    value={customerInfo.name}
+                                    onChange={e => setCustomerInfo({...customerInfo, name: e.target.value})}
+                                />
+                            </div>
+                            <div className='form-group'>
+                                <label>Alamat Pengiriman (Opsional)</label>
+                                <textarea 
+                                    placeholder='Masukkan alamat detail jika ingin diantar'
+                                    value={customerInfo.address}
+                                    onChange={e => setCustomerInfo({...customerInfo, address: e.target.value})}
+                                />
+                            </div>
+                            <div className='modal-total'>
+                                <span>Total Tagihan:</span>
+                                <strong>Rp {getTotalPrice().toLocaleString('id-ID')}</strong>
+                            </div>
+                            <button type='submit' className='submit-order-btn'>
+                                Kirim ke WhatsApp →
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

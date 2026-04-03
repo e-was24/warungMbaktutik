@@ -129,12 +129,56 @@ const AdminDashboard = ({ onBack }) => {
         }
     };
 
-    const handleAddProduct = (e) => {
+    const pushToCloud = async (products) => {
+        setSyncStatus('Auto-Saving...');
+        try {
+            const response = await fetch('/api/sync', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    products: products,
+                    isInitialized: true 
+                })
+            });
+            if (response.ok) {
+                setSyncStatus('Tersimpan di Cloud ✅');
+                setTimeout(() => setSyncStatus(''), 3000);
+            }
+        } catch (err) {
+            console.error("Auto-sync failed", err);
+            setSyncStatus('Gagal Simpan ke Cloud ❌');
+        }
+    };
+
+    const handleAddProduct = async (e) => {
         e.preventDefault();
         if (!newProduct.name || !newProduct.price) return;
 
+        setSyncStatus('Sedang Menambah Menu...');
+        let finalImage = newProduct.image;
+
+        // If it's a local preview (base64), upload it to Blob immediately
+        if (finalImage && finalImage.startsWith('data:image')) {
+            try {
+                const res = await fetch(finalImage);
+                const blobData = await res.blob();
+                const uploadRes = await fetch('/api/upload', {
+                    method: 'POST',
+                    headers: { 'x-filename': `product-${Date.now()}.png` },
+                    body: blobData
+                });
+                if (uploadRes.ok) {
+                    const result = await uploadRes.json();
+                    finalImage = result.url;
+                }
+            } catch (err) {
+                console.error("Upload failed in addProduct:", err);
+            }
+        }
+
         const product = {
             ...newProduct,
+            image: finalImage,
             price: parseInt(newProduct.price),
             id: Date.now()
         };
@@ -145,8 +189,8 @@ const AdminDashboard = ({ onBack }) => {
         setNewProduct({ name: '', price: '', category: 'minuman', variant: '', image: null });
         setImagePreview(null);
         
-        // Trigger storage event for other tabs
         window.dispatchEvent(new Event('storage'));
+        pushToCloud(updatedProducts);
     };
 
     const deleteProduct = async (id) => {
@@ -171,7 +215,7 @@ const AdminDashboard = ({ onBack }) => {
         setCustomProducts(updatedProducts);
         window.dispatchEvent(new Event('storage'));
         
-        setSyncStatus('Menu dihapus lokal. Klik SINKRON untuk update ke HP pembeli.');
+        pushToCloud(updatedProducts);
     };
 
     const updateProductVariant = (id, updatedData) => {
@@ -183,6 +227,8 @@ const AdminDashboard = ({ onBack }) => {
         setCustomProducts(updatedProducts);
         setEditingVariant(null);
         window.dispatchEvent(new Event('storage'));
+        
+        pushToCloud(updatedProducts);
     };
 
     const handleGroupImageUpload = async (groupName, file) => {
@@ -205,7 +251,9 @@ const AdminDashboard = ({ onBack }) => {
             );
             setCustomProducts(updatedProducts);
             localStorage.setItem('warung_custom_products', JSON.stringify(updatedProducts));
-            alert(`Thumbnail ${groupName} berhasil diperbarui! Klik SINKRON untuk simpan ke cloud.`);
+            
+            pushToCloud(updatedProducts);
+            alert(`Thumbnail ${groupName} berhasil diperbarui!`);
         } catch (err) {
             console.error(err);
             alert('Gagal mengunggah foto.');
@@ -250,7 +298,9 @@ const AdminDashboard = ({ onBack }) => {
         localStorage.setItem('warung_custom_products', JSON.stringify(updatedProducts));
         setCustomProducts(updatedProducts);
         window.dispatchEvent(new Event('storage'));
-        setSyncStatus('Menu awal berhasil diimpor! Jangan lupa klik SINKRON.');
+        
+        pushToCloud(updatedProducts);
+        alert('Menu awal berhasil diimpor!');
     };
 
     const clearData = () => {

@@ -50,7 +50,25 @@ const AdminDashboard = ({ onBack }) => {
 
     useEffect(() => {
         loadData();
+        fetchCloudData(); // Pull latest from Vercel Blob to stay synced
     }, []);
+
+    const fetchCloudData = async () => {
+        try {
+            const res = await fetch(`/api/sync?t=${Date.now()}`);
+            if (!res.ok) return;
+            const cloudData = await res.json();
+            const cloudProducts = Array.isArray(cloudData) ? cloudData : (cloudData.products || []);
+            
+            if (Array.isArray(cloudProducts) && cloudProducts.length > 0) {
+                // If cloud has data, it should seed the local view
+                setCustomProducts(cloudProducts);
+                localStorage.setItem('warung_custom_products', JSON.stringify(cloudProducts));
+            }
+        } catch (err) {
+            console.warn("Could not sync with cloud on mount:", err);
+        }
+    };
 
     const loadData = () => {
         const storedOrders = JSON.parse(localStorage.getItem('warung_orders') || '[]');

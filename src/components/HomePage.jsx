@@ -333,11 +333,7 @@ const HomePage = ({ onAdminClick }) => {
                   className="card-main-img"
                 />
                 <div className="card-category-tag">{section.category}</div>
-                {section.isNew && getCountdown(section.newUntil) && (
-                  <div className="new-product-badge">
-                    NEW • {getCountdown(section.newUntil)}
-                  </div>
-                )}
+                {section.isNew && <div className="new-product-badge">NEW</div>}
               </div>
 
               <div className="card-content">

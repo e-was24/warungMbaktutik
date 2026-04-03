@@ -44,8 +44,9 @@ const AdminDashboard = ({ onBack }) => {
     const [stats, setStats] = useState({ totalOrders: 0, successOrders: 0, totalRevenue: 0, cancelledOrders: 0 });
     const [newProduct, setNewProduct] = useState({ name: '', price: '', category: 'minuman', variant: '', image: null });
     const [imagePreview, setImagePreview] = useState(null);
-    const [editingVariant, setEditingVariant] = useState(null); // { id, price, variant }
     const [isSyncing, setIsSyncing] = useState(false);
+    const [uploadingGroup, setUploadingGroup] = useState(null);
+    const [editingVariant, setEditingVariant] = useState(null); // { id, price, variant }
     const [syncStatus, setSyncStatus] = useState('');
 
     useEffect(() => {
@@ -182,6 +183,37 @@ const AdminDashboard = ({ onBack }) => {
         setCustomProducts(updatedProducts);
         setEditingVariant(null);
         window.dispatchEvent(new Event('storage'));
+    };
+
+    const handleGroupImageUpload = async (groupName, file) => {
+        if (!file) return;
+        setUploadingGroup(groupName);
+        
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const res = await fetch('/api/upload', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (!res.ok) throw new Error('Upload failed');
+            const data = await res.json();
+            
+            // Update ALL products in the group with the new image
+            const updatedProducts = customProducts.map(p => 
+                p.name === groupName ? { ...p, image: data.url } : p
+            );
+            setCustomProducts(updatedProducts);
+            localStorage.setItem('warung_custom_products', JSON.stringify(updatedProducts));
+            alert(`Thumbnail ${groupName} berhasil diperbarui! Klik SINKRON untuk simpan ke cloud.`);
+        } catch (err) {
+            console.error(err);
+            alert('Gagal mengunggah foto.');
+        } finally {
+            setUploadingGroup(null);
+        }
     };
 
     const toggleOrderStatus = (timestamp) => {
@@ -438,11 +470,32 @@ const AdminDashboard = ({ onBack }) => {
                             ).map(([name, variants]) => (
                                 <div key={name} className='grouped-product-card'>
                                     <div className='gp-header'>
-                                        {variants[0].image ? (
-                                            <img src={variants[0].image} alt={name} className='gp-img' />
-                                        ) : (
-                                            <div className='gp-img-placeholder'>{name[0]}</div>
-                                        )}
+                                        <div className='gp-img-container' onClick={() => document.getElementById(`file-input-${name}`).click()}>
+                                            {variants[0].image ? (
+                                                <img src={variants[0].image} alt={name} className='gp-img' />
+                                            ) : (
+                                                <div className='gp-img-placeholder'>{name[0]}</div>
+                                            )}
+                                            <div className='gp-img-overlay'>
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                                                    <circle cx="12" cy="13" r="4" />
+                                                </svg>
+                                                <span>Ganti Foto</span>
+                                            </div>
+                                            {uploadingGroup === name && (
+                                                <div className='gp-img-spinner'>
+                                                    <div className='spinner-small'></div>
+                                                </div>
+                                            )}
+                                            <input 
+                                                id={`file-input-${name}`}
+                                                type='file' 
+                                                accept='image/*' 
+                                                style={{ display: 'none' }}
+                                                onChange={e => handleGroupImageUpload(name, e.target.files[0])}
+                                            />
+                                        </div>
                                         <div className='gp-info'>
                                             <span className='gp-name'>{name}</span>
                                             <span className='gp-cat'>{variants[0].category}</span>

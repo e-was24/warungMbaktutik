@@ -149,10 +149,10 @@ body {
 }
 
 .hero-title {
-    font-size: 72px;
+    font-size: clamp(42px, 8vw, 72px);
     font-weight: 900;
     line-height: 1.1;
-    letter-spacing: -3px;
+    letter-spacing: -0.04em;
     margin-bottom: 24px;
     animation: fadeInUp 0.8s ease-out;
 }
@@ -166,12 +166,12 @@ body {
 
 /* Grid Layout */
 .premium-menu-grid {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 32px;
-    padding: 0 20px;
+    padding: 0 40px;
 }
 
 /* Card Design */
@@ -469,10 +469,43 @@ body {
     animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Mobile Responsive */
+/* Responsive Overrides */
+@media (max-width: 1200px) {
+    .premium-menu-grid {
+        grid-template-columns: repeat(2, 1fr);
+        padding: 0 30px;
+    }
+}
+
 @media (max-width: 768px) {
     .premium-nav { padding: 16px 20px; }
     .hero-title { font-size: 42px; }
-    .premium-menu-grid { grid-template-columns: 1fr; }
+    .premium-menu-grid { 
+        grid-template-columns: 1fr; 
+        padding: 0 20px;
+        gap: 24px;
+    }
     .category-switcher { scale: 0.9; }
+    
+    .premium-hero {
+        padding: 130px 20px 40px;
+    }
+
+    .premium-cart-pill {
+        width: 90%;
+        min-width: unset;
+        left: 5%;
+        transform: none;
+        padding: 10px 10px 10px 20px;
+        bottom: 20px;
+    }
+
+    .pill-info { gap: 12px; }
+    .pill-action-btn { padding: 10px 20px; }
 }
+
+@media (max-width: 480px) {
+    .hero-title { font-size: 34px; }
+    .nav-brand { font-size: 18px; }
+    .switch-btn { padding: 6px 12px; font-size: 13px; }
+}

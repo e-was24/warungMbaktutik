@@ -134,7 +134,11 @@ const HomePage = ({ onAdminClick }) => {
                             items: [] 
                         };
                     }
-                    acc[name].items.push({ name: name, price: p.price, id: p.id });
+                    acc[name].items.push({ 
+                        name: p.variant ? `${name} (${p.variant.toUpperCase()})` : name, 
+                        price: p.price, 
+                        id: p.id 
+                    });
                     // Use the first image found for the group
                     if (!acc[name].image && p.image) acc[name].image = p.image;
                     return acc;

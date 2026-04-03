@@ -5,7 +5,7 @@ const AdminDashboard = ({ onBack }) => {
     const [orders, setOrders] = useState([]);
     const [customProducts, setCustomProducts] = useState([]);
     const [stats, setStats] = useState({ totalOrders: 0, successOrders: 0, totalRevenue: 0, cancelledOrders: 0 });
-    const [newProduct, setNewProduct] = useState({ name: '', price: '', category: 'minuman', image: null });
+    const [newProduct, setNewProduct] = useState({ name: '', price: '', category: 'minuman', variant: '', image: null });
     const [imagePreview, setImagePreview] = useState(null);
 
     useEffect(() => {
@@ -80,7 +80,7 @@ const AdminDashboard = ({ onBack }) => {
         const updatedProducts = [...customProducts, product];
         localStorage.setItem('warung_custom_products', JSON.stringify(updatedProducts));
         setCustomProducts(updatedProducts);
-        setNewProduct({ name: '', price: '', category: 'minuman', image: null });
+        setNewProduct({ name: '', price: '', category: 'minuman', variant: '', image: null });
         setImagePreview(null);
         
         // Trigger storage event for other tabs
@@ -165,12 +165,25 @@ const AdminDashboard = ({ onBack }) => {
                             <div className='inputs-area'>
                                 <input 
                                     type='text' 
-                                    placeholder='Nama Produk (MIsal: Seblak Komplit)' 
+                                    placeholder='Nama Menu (Misal: SEBLAK)' 
                                     value={newProduct.name}
                                     onChange={e => setNewProduct({...newProduct, name: e.target.value.toUpperCase()})}
+                                    list='existing-product-names'
                                     required
                                 />
+                                <datalist id='existing-product-names'>
+                                    {[...new Set(customProducts.map(p => p.name))].map(name => (
+                                        <option key={name} value={name} />
+                                    ))}
+                                </datalist>
                                 <div className='row-inputs'>
+                                    <input 
+                                        type='text' 
+                                        className='variant-input'
+                                        placeholder='Varian (Misal: Spesial / Level 3)' 
+                                        value={newProduct.variant}
+                                        onChange={e => setNewProduct({...newProduct, variant: e.target.value})}
+                                    />
                                     <input 
                                         type='number' 
                                         placeholder='Harga (IDR)' 
@@ -187,7 +200,7 @@ const AdminDashboard = ({ onBack }) => {
                                         <option value='makanan'>Seblak</option>
                                     </select>
                                 </div>
-                                <button type='submit' className='add-btn-full'>Tambah Produk ke Menu</button>
+                                <button type='submit' className='add-btn-full'>Tambah Menu ke Card</button>
                             </div>
                         </div>
                     </form>
@@ -235,7 +248,10 @@ const AdminDashboard = ({ onBack }) => {
                                     <div className='gp-variants'>
                                         {variants.map(v => (
                                             <div key={v.id} className='gp-variant-row'>
-                                                <span className='v-price'>Rp {v.price.toLocaleString('id-ID')}</span>
+                                                <div className='v-label'>
+                                                    {v.variant && <span className='v-name'>{v.variant}</span>}
+                                                    <span className='v-price'>Rp {v.price.toLocaleString('id-ID')}</span>
+                                                </div>
                                                 <button className='delete-v-btn' onClick={() => deleteProduct(v.id)}>&times;</button>
                                             </div>
                                         ))}

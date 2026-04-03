@@ -383,9 +383,26 @@
     border-radius: 10px;
 }
 
+.v-label {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.v-name {
+    font-size: 11px;
+    font-weight: 700;
+    color: #9cb3ff;
+    text-transform: uppercase;
+}
+
 .v-price {
     font-weight: 700;
     color: #aa3bff;
+}
+
+.variant-input {
+    flex: 1.5 !important;
 }
 
 .delete-v-btn {

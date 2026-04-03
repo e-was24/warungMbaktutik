@@ -742,17 +742,4 @@ body {
         padding: 24px;
     }
 }
-
-
-.admin-trigger {
-    cursor: pointer;
-    margin-left: 8px;
-    opacity: 0.4;
-    transition: all 0.3s ease;
-    font-size: 11px;
-}
-
-.admin-trigger:hover {
-    opacity: 1;
-    color: var(--p-accent);
-}
+

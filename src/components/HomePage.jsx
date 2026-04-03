@@ -18,6 +18,7 @@ const HomePage = ({ onAdminClick }) => {
     const [activeTab, setActiveTab] = useState('minuman'); // 'minuman' or 'makanan'
     const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
     const [customerInfo, setCustomerInfo] = useState({ name: '', address: '' });
+    const [adminClickCount, setAdminClickCount] = useState(0);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -199,6 +200,26 @@ const HomePage = ({ onAdminClick }) => {
         sendToWhatsApp();
     };
 
+    const handleHeroClick = () => {
+        const nextCount = adminClickCount + 1;
+        setAdminClickCount(nextCount);
+
+        if (nextCount === 3) {
+            const password = window.prompt('Masukkan Password Admin:');
+            const adminPass = import.meta.env.VITE_ADMIN_PASSWORD || 'admin123';
+            
+            if (password === adminPass) {
+                onAdminClick();
+            } else if (password !== null) {
+                alert('Password Salah!');
+            }
+            setAdminClickCount(0);
+        }
+
+        // Reset count after 2 seconds of inactivity
+        setTimeout(() => setAdminClickCount(0), 2000);
+    };
+
     return (
         <div className={`home-page-premium ${activeTab}-active`}>
             <div className='decorative-blob blob-1'></div>
@@ -230,7 +251,7 @@ const HomePage = ({ onAdminClick }) => {
                 <div className='hero-badge'>
                     {activeTab === 'minuman' ? 'Fresh Snacks & Drinks' : 'Spicy & Authentic Seblak'}
                 </div>
-                <h1 className='hero-title'>
+                <h1 className='hero-title' onClick={handleHeroClick}>
                     Cita Rasa <span className='text-gradient'>{activeTab === 'minuman' ? 'Autentik' : 'Pedas'}</span><br/>
                     Dalam Setiap <span className='text-gradient'>{activeTab === 'minuman' ? 'Gelas' : 'Suapan'}</span>
                 </h1>
@@ -320,8 +341,7 @@ const HomePage = ({ onAdminClick }) => {
                 <div className='footer-brand'>WARUNG MBK TUTIK</div>
                 <div className='footer-contact'>+{WHATSAPP_NUMBER}</div>
                 <div className='footer-legal'>
-                    &copy; 2026 Crafted with Excellence 
-                    <span className='admin-trigger' onClick={onAdminClick}> • Admin</span>
+                    &copy; 2026 Crafted with Excellence
                 </div>
             </footer>
 

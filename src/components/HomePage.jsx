@@ -1,14 +1,5 @@
 import React, { useState, useEffect } from "react";
 import "./HomePage.css";
-import teaImg from "../assets/tea_series.png";
-import yakultImg from "../assets/yakult_series.png";
-import esTelerImg from "../assets/es_teler_new.png";
-import mojitoImg from "../assets/mojito_new.png";
-import alpukatImg from "../assets/alpukat_kocok_new.png";
-import seblakSosisImg from "../assets/seblak_sosis.png";
-import seblakSpesialImg from "../assets/seblak_spesial.png";
-import seblakBlengerImg from "../assets/seblak_blenger.png";
-
 import drinkHeroBg from "../assets/welcome_bg.png";
 import foodHeroBg from "../assets/seblak_hero.png";
 
@@ -24,135 +15,9 @@ const HomePage = ({ onAdminClick }) => {
   const [adminClickCount, setAdminClickCount] = useState(0);
   const [currentTime, setCurrentTime] = useState(new Date());
 
-  const initialMinuman = [
-    {
-      category: "TEA SERIES",
-      id: "tea",
-      image: teaImg,
-      mainPrice: 3000,
-      items: [
-        { name: "LEMON TEA", price: 5000 },
-        { name: "LYCHEE TEA", price: 5000 },
-        { name: "MANGO TEA", price: 5000 },
-        { name: "STRAWBERRY TEA", price: 5000 },
-        { name: "GRAPE TEA", price: 5000 },
-        { name: "MELON TEA", price: 5000 },
-      ],
-      footer: "JASMINE TEA",
-    },
-    {
-      category: "YAKULT SERIES",
-      id: "yakult",
-      image: yakultImg,
-      items: [
-        { name: "YAKULT STRAWBERRY", price: 8000 },
-        { name: "YAKULT ORANGE", price: 8000 },
-        { name: "YAKULT GRAPE", price: 8000 },
-        { name: "YAKULT LYCHEE", price: 8000 },
-        { name: "YAKULT MELON", price: 8000 },
-      ],
-    },
-    {
-      category: "ES TELER",
-      id: "esteler",
-      image: esTelerImg,
-      items: [{ name: "ES TELER CREAMY", price: 10000 }],
-    },
-    {
-      category: "MOJITO",
-      id: "mojito",
-      image: mojitoImg,
-      items: [
-        { name: "MOJITO STRAWBERRY", price: 8000 },
-        { name: "MOJITO LEMON", price: 8000 },
-        { name: "MOJITO MELON", price: 8000 },
-        { name: "MOJITO LYCHEE", price: 8000 },
-        { name: "MOJITO ORANGE", price: 8000 },
-        { name: "MOJITO GRAPE", price: 8000 },
-      ],
-    },
-    {
-      category: "ALPUKAT KOCOK",
-      id: "alpukat",
-      image: alpukatImg,
-      items: [
-        { name: "ALPUKAT KOCOK ORIGINAL", price: 10000 },
-        { name: "ALPUKAT KOCOK MILO", price: 10000 },
-        { name: "ALPUKAT KOCOK + KEJU BERUTAL", price: 10000 },
-        { name: "ALPUKAT KOCOK + COKLAT + KEJU", price: 10000 },
-        { name: "ALPUKAT KOCOK + COKLAT PARUT", price: 10000 },
-      ],
-    },
-  ];
-
-  const initialMakanan = [
-    {
-      category: "SEBLAK REGULER",
-      id: "seblak-reg",
-      image: seblakSosisImg,
-      items: [
-        {
-          name: "SEBLAK SOSIS",
-          price: 10000,
-          desc: "Sosis, Mie, Kerupuk, Sayur, Telur",
-        },
-        {
-          name: "SEBLAK BAKSO",
-          price: 10000,
-          desc: "Bakso, Mie, Kerupuk, Sayur, Telur",
-        },
-        {
-          name: "SEBLAK HEMAT",
-          price: 10000,
-          desc: "Bakso, Sosis, Mie, Kerupuk, Sayur, Telur",
-        },
-        {
-          name: "SEBLAK BIASA",
-          price: 12000,
-          desc: "Sosis, Bakso, Dumpling, Mie, Kerupuk, Sayur, Telur",
-        },
-      ],
-    },
-    {
-      category: "SEBLAK PREMIUM",
-      id: "seblak-premium",
-      image: seblakSpesialImg,
-      items: [
-        {
-          name: "SEBLAK CUANKI 🔥",
-          price: 15000,
-          desc: "Cuanki, Telur, Pilus, Some kering",
-        },
-        {
-          name: "SEBLAK SPESIAL",
-          price: 15000,
-          desc: "Sosis, Bakso, Dumpling, Mie, Kerupuk, Sayur, Telur, Kembang Cumi",
-        },
-        {
-          name: "SEBLAK ISTIMEWA",
-          price: 20000,
-          desc: "Sosis, Bakso, Dumpling, Cuanki, Some, Enoki, Kembang Cumi, Cikuwa...",
-        },
-      ],
-    },
-    {
-      category: "EXTRA BLENGER",
-      id: "seblak-extra",
-      image: seblakBlengerImg,
-      items: [
-        {
-          name: "SEBLAK BLENGER",
-          price: 30000,
-          desc: "Porsi Super Lengkap: Sosis, Bakso, Dumpling, Cuanki, Enoki, Cikuwa, Jamur...",
-        },
-      ],
-      footer: "PRASMANAN MINIMAL 10K",
-    },
-  ];
-
   const [menuData, setMenuData] = useState({
-    minuman: initialMinuman,
-    makanan: initialMakanan,
+    minuman: [],
+    makanan: [],
   });
 
   useEffect(() => {
@@ -197,8 +62,8 @@ const HomePage = ({ onAdminClick }) => {
       );
 
       setMenuData({
-        minuman: [...initialMinuman, ...customMinuman],
-        makanan: [...initialMakanan, ...customMakanan],
+        minuman: customMinuman,
+        makanan: customMakanan,
       });
     };
 

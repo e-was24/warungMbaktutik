@@ -131,25 +131,56 @@ const AdminDashboard = ({ onBack }) => {
     };
 
     const syncToCloud = async () => {
-        if (!confirm('Kirim semua data menu saat ini ke Cloud (Internet)? Data di HP lain akan terupdate.')) return;
+        if (!confirm('Kirim semua data menu saat ini ke Cloud (Internet)? Foto-foto menu juga akan diunggah (proses ini mungkin butuh waktu).')) return;
         
         setIsSyncing(true);
-        setSyncStatus('Sedang Mengunggah...');
+        setSyncStatus('Sedang Mengunggah Foto & Menu...');
         
         try {
+            // 1. Handle Image Uploads for all products
+            const updatedProducts = await Promise.all(customProducts.map(async (p) => {
+                // If it's still base64 (local), upload to Blob
+                if (p.image && p.image.startsWith('data:image')) {
+                    try {
+                        const res = await fetch(p.image);
+                        const blobData = await res.blob();
+                        
+                        const uploadRes = await fetch('/api/upload', {
+                            method: 'POST',
+                            headers: { 'x-filename': `product-${p.id}.png` },
+                            body: blobData
+                        });
+                        
+                        if (uploadRes.ok) {
+                            const result = await uploadRes.json();
+                            return { ...p, image: result.url };
+                        }
+                    } catch (err) {
+                        console.error("Error uploading image for", p.name, err);
+                    }
+                }
+                return p;
+            }));
+
+            // Save updated products (with Cloud URLs) locally first
+            localStorage.setItem('warung_custom_products', JSON.stringify(updatedProducts));
+
+            // 2. Sync final menu JSON to Cloud
             const response = await fetch('/api/sync', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ products: customProducts })
+                body: JSON.stringify({ products: updatedProducts })
             });
 
-            if (!response.ok) throw new Error('Gagal upload');
+            if (!response.ok) throw new Error('Gagal sync menu');
 
-            setSyncStatus('Berhasil di-Post! ✅');
-            setTimeout(() => setSyncStatus(''), 3000);
+            setSyncStatus('Berhasil di-Post! Foto & Menu Aman ✅');
+            loadData(); // Reload to show new URLs
+            setTimeout(() => setSyncStatus(''), 5000);
         } catch (error) {
             console.error("Sync Error:", error);
             setSyncStatus('Gagal Sinkron ❌');
+            alert('Gagal Sinkron: Pastikan Vercel Blob sudah aktif di dashboard kamu.');
         } finally {
             setIsSyncing(false);
         }

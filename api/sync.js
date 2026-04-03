@@ -1,10 +1,15 @@
-import { kv } from '@vercel/kv';
+import { put, list } from '@vercel/blob';
 
 export default async function handler(req, res) {
   try {
     if (req.method === 'GET') {
-      const products = await kv.get('warung_products') || [];
-      return res.status(200).json(products);
+      // Find the latest menu.json
+      const { blobs } = await list({ prefix: 'warung-menu.json' });
+      if (blobs.length === 0) return res.status(200).json([]);
+      
+      const response = await fetch(blobs[0].url);
+      const data = await response.json();
+      return res.status(200).json(data);
     } 
 
     if (req.method === 'POST') {
@@ -12,8 +17,15 @@ export default async function handler(req, res) {
       if (!Array.isArray(products)) {
         return res.status(400).json({ error: 'Data tidak valid' });
       }
-      await kv.set('warung_products', products);
-      return res.status(200).json({ success: true });
+      
+      // Upload the menu as a JSON file
+      const { url } = await put('warung-menu.json', JSON.stringify(products), {
+        access: 'public',
+        addRandomSuffix: false, // Overwrite existing
+        contentType: 'application/json'
+      });
+      
+      return res.status(200).json({ success: true, url });
     }
 
     return res.status(405).json({ error: 'Method not allowed' });

@@ -166,10 +166,13 @@ const HomePage = ({ onAdminClick }) => {
             try {
                 const res = await fetch(`/api/sync?t=${Date.now()}`);
                 if (!res.ok) return;
-                const cloudProducts = await res.json();
+                const cloudData = await res.json();
                 
+                // Support legacy array and new object format
+                const cloudProducts = Array.isArray(cloudData) ? cloudData : (cloudData.products || []);
+                const isInitialized = cloudData.isInitialized || false;
+
                 if (Array.isArray(cloudProducts)) {
-                    // Update even if empty (to allow clearing the menu)
                     const groupProducts = (items) => {
                         const threeDaysAgo = Date.now() - (3 * 24 * 60 * 60 * 1000);
                         const grouped = items.reduce((acc, p) => {
@@ -198,9 +201,10 @@ const HomePage = ({ onAdminClick }) => {
                     const cloudMinuman = groupProducts(cloudProducts.filter(p => p.category === 'minuman'));
                     const cloudMakanan = groupProducts(cloudProducts.filter(p => p.category === 'makanan'));
 
+                    // If Cloud is initialized, it replaces the hardcoded menu entirely
                     setMenuData({ 
-                        minuman: [...initialMinuman, ...cloudMinuman], 
-                        makanan: [...initialMakanan, ...cloudMakanan] 
+                        minuman: isInitialized ? cloudMinuman : [...initialMinuman, ...cloudMinuman], 
+                        makanan: isInitialized ? cloudMakanan : [...initialMakanan, ...cloudMakanan] 
                     });
                     
                     localStorage.setItem('warung_custom_products', JSON.stringify(cloudProducts));

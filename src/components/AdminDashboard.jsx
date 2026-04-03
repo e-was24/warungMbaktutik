@@ -257,7 +257,10 @@ const AdminDashboard = ({ onBack }) => {
             const response = await fetch('/api/sync', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ products: updatedProducts })
+                body: JSON.stringify({ 
+                    products: updatedProducts,
+                    isInitialized: true // Flag to tell HomePage to use ONLY cloud data
+                })
             });
 
             if (!response.ok) {

@@ -125,6 +125,7 @@ const AdminDashboard = ({ onBack }) => {
                             required
                         />
                         <select 
+                        className='categoryOption'
                             value={newProduct.category}
                             onChange={e => setNewProduct({...newProduct, category: e.target.value})}
                         >

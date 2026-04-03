@@ -130,12 +130,8 @@ const HomePage = ({ onAdminClick }) => {
 
           // If Cloud is initialized, it replaces the hardcoded menu entirely
           setMenuData({
-            minuman: isInitialized
-              ? cloudMinuman
-              : [...initialMinuman, ...cloudMinuman],
-            makanan: isInitialized
-              ? cloudMakanan
-              : [...initialMakanan, ...cloudMakanan],
+            minuman: cloudMinuman,
+            makanan: cloudMakanan,
           });
 
           localStorage.setItem(

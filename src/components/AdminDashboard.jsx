@@ -149,12 +149,7 @@ const AdminDashboard = ({ onBack }) => {
     };
 
     const syncToCloud = async () => {
-        if (customProducts.length === 0) {
-            alert('Belum ada menu untuk di-post!');
-            return;
-        }
-
-        if (!confirm('Kirim semua data menu saat ini ke Cloud (Internet)? Foto-foto menu juga akan diunggah (proses ini mungkin butuh waktu).')) return;
+        if (!confirm('Simpan perubahan ke Cloud (Internet)? Jika menu kosong, maka menu di HP pembeli juga akan terhapus.')) return;
         
         setIsSyncing(true);
         setSyncStatus('Sedang Mengunggah Foto & Menu...');

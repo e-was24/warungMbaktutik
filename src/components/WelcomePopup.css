@@ -1,0 +1,244 @@
+.welcome-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(12px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: fadeIn 0.8s ease-out;
+}
+
+.welcome-modal {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 32px;
+  padding: 60px 40px;
+  max-width: 550px;
+  width: 90%;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  animation: elegantAppear 1s cubic-bezier(0.16, 1, 0.3, 1);
+  color: #08060d;
+}
+
+.welcome-logo {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 32px;
+  color: #aa3bff;
+}
+
+.logo-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.draw-circle {
+  stroke-dasharray: 252;
+  stroke-dashoffset: 252;
+  animation: draw 1.5s ease-out forwards;
+}
+
+.spoon-group {
+  opacity: 0;
+  animation: spoonIn 1s cubic-bezier(0.16, 1, 0.3, 1) 1s forwards;
+}
+
+.fork-group {
+  opacity: 0;
+  animation: forkIn 1s cubic-bezier(0.16, 1, 0.3, 1) 1.2s forwards;
+}
+
+.animated-title {
+  font-size: 42px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.animated-title span {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: letterAppear 0.5s ease-out forwards;
+}
+
+.fade-in-text {
+  font-size: 18px;
+  color: #6b6375;
+  margin-bottom: 40px;
+  line-height: 1.6;
+  opacity: 0;
+  animation: fadeIn 1s ease-out 1.8s forwards;
+}
+
+.welcome-button {
+  background: linear-gradient(135deg, #aa3bff 0%, #7e1fe3 100%);
+  color: white;
+  border: none;
+  border-radius: 16px;
+  padding: 18px 40px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 10px 20px rgba(170, 59, 255, 0.3);
+  opacity: 0;
+  animation: fadeIn 1s ease-out 2.2s forwards;
+}
+
+.welcome-button:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 15px 30px rgba(170, 59, 255, 0.4);
+}
+
+.welcome-button:active {
+  transform: translateY(-2px);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes elegantAppear {
+  from {
+    opacity: 0;
+    transform: translateY(60px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes draw {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes spoonIn {
+  from {
+    opacity: 0;
+    transform: translate(55px, 55px) rotate(-45deg) translate(-30px, -30px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(55px, 55px) rotate(-45deg) translate(0, 0);
+  }
+}
+
+@keyframes forkIn {
+  from {
+    opacity: 0;
+    transform: translate(55px, 45px) rotate(45deg) translate(30px, -30px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(55px, 45px) rotate(45deg) translate(0, 0);
+  }
+}
+
+@keyframes letterAppear {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.welcome-countdown {
+  font-size: 16px;
+  color: #6b6375;
+  margin-top: 20px;
+  animation: fadeIn 1s ease-out 2.5s forwards;
+  opacity: 0;
+}
+
+.welcome-countdown span {
+  color: #aa3bff;
+  font-weight: 700;
+  font-size: 20px;
+  display: inline-block;
+  min-width: 1.2em;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .welcome-modal {
+    background: rgba(18, 19, 26, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #f3f4f6;
+  }
+  .welcome-logo {
+    color: #c084fc;
+  }
+  .fade-in-text {
+    color: #9ca3af;
+  }
+  .welcome-countdown span {
+    color: #c084fc;
+  }
+}
+
+@media (max-width: 1024px) {
+  .animated-title {
+    font-size: 36px;
+  }
+  .welcome-modal {
+    padding: 40px 30px;
+    max-width: 500px;
+  }
+  .welcome-logo {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 24px;
+  }
+}
+
+@media (max-width: 600px) {
+  .animated-title {
+    font-size: 28px;
+    letter-spacing: 1px;
+  }
+  .welcome-modal {
+    padding: 30px 20px;
+    border-radius: 24px;
+    width: 95%;
+  }
+  .welcome-logo {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 20px;
+  }
+  .fade-in-text {
+    font-size: 16px;
+    margin-bottom: 30px;
+  }
+  .welcome-button {
+    padding: 14px 30px;
+    font-size: 16px;
+    width: 100%;
+  }
+}
+
+@media (max-width: 400px) {
+  .animated-title {
+    font-size: 24px;
+  }
+  .welcome-modal {
+    padding: 24px 16px;
+  }
+  .welcome-logo {
+    width: 70px;
+    height: 70px;
+  }
+}

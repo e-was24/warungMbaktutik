@@ -237,6 +237,88 @@ body {
     -webkit-text-fill-color: transparent;
 }
 
+/* Prasmanan Banner */
+.prasmanan-banner {
+    max-width: 1100px;
+    margin: 0 auto 40px;
+    padding: 24px 32px;
+    background: linear-gradient(135deg, rgba(255, 77, 77, 0.15) 0%, rgba(0, 0, 0, 0.4) 100%);
+    border: 1px solid rgba(255, 77, 77, 0.3);
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 77, 77, 0.1);
+    position: relative;
+    overflow: hidden;
+    animation: floatBanner 4s infinite ease-in-out;
+}
+
+.prasmanan-banner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+    transform: translateX(-100%);
+    animation: shimmerBanner 3s infinite;
+}
+
+@keyframes floatBanner {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+@keyframes shimmerBanner {
+    100% { transform: translateX(100%); }
+}
+
+.prasmanan-icon {
+    font-size: 32px;
+    filter: drop-shadow(0 0 10px rgba(255, 77, 77, 0.5));
+}
+
+.prasmanan-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.prasmanan-title {
+    font-size: 18px;
+    font-weight: 900;
+    color: #ff4d4d;
+    letter-spacing: 2px;
+}
+
+.prasmanan-desc {
+    font-size: 14px;
+    color: var(--p-text-muted);
+}
+
+.prasmanan-desc strong {
+    color: white;
+    font-weight: 800;
+}
+
+@media (max-width: 768px) {
+    .prasmanan-banner {
+        margin: 0 20px 30px;
+        padding: 16px 20px;
+        gap: 15px;
+    }
+    
+    .prasmanan-title {
+        font-size: 16px;
+    }
+    
+    .prasmanan-desc {
+        font-size: 12px;
+    }
+}
+
 /* Grid Layout */
 .premium-menu-grid {
     max-width: 1100px;

@@ -293,6 +293,16 @@ const HomePage = ({ onAdminClick }) => {
         </h1>
       </section>
 
+      {activeTab === "makanan" && (
+        <div className="prasmanan-banner fade-in-up">
+          <div className="prasmanan-icon">🔥</div>
+          <div className="prasmanan-text">
+            <span className="prasmanan-title">SEBLAK PRASMANAN</span>
+            <span className="prasmanan-desc">Ambil Sendiri Isian Serumu! <strong>Minimal Rp 10.000</strong></span>
+          </div>
+        </div>
+      )}
+
       <main className="premium-menu-grid">
         {activeMenuData.map((section, sIdx) => (
           <div

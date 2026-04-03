@@ -5,12 +5,45 @@
     --p-card: rgba(255, 255, 255, 0.03);
     --p-border: rgba(255, 255, 255, 0.08);
     --p-accent: #aa3bff;
+    --p-accent-rgb: 170, 59, 255;
     --p-accent-deep: #7e1fe3;
     --p-accent-warm: #ff4d4d;
     --p-text: #ffffff;
     --p-text-muted: #9ca3af;
     --p-glass-bg: rgba(255, 255, 255, 0.05);
     --p-glow: rgba(170, 59, 255, 0.2);
+}
+
+@media (prefers-color-scheme: light) {
+    :root {
+        --p-bg: #f8fafc;
+        --p-card: rgba(255, 255, 255, 0.8);
+        --p-border: rgba(0, 0, 0, 0.06);
+        --p-text: #0f172a;
+        --p-text-muted: #475569;
+        --p-glass-bg: rgba(255, 255, 255, 0.6);
+        --p-glow: rgba(170, 59, 255, 0.1);
+    }
+    
+    .text-gradient {
+        background: linear-gradient(135deg, var(--p-text) 0%, var(--p-accent) 100%) !important;
+        -webkit-background-clip: text !important;
+        background-clip: text !important;
+    }
+
+    .premium-cart-pill {
+        background: rgba(255, 255, 255, 0.9) !important;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.1) !important;
+    }
+
+    .pill-action-btn {
+        background: var(--p-text) !important;
+        color: white !important;
+    }
+
+    .premium-nav.scrolled {
+        background: rgba(255, 255, 255, 0.8) !important;
+    }
 }
 
 * {

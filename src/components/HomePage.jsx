@@ -164,11 +164,12 @@ const HomePage = ({ onAdminClick }) => {
         // Cloud Sync Fetch (Integrated Vercel KV)
         const fetchCloudData = async () => {
             try {
-                const res = await fetch('/api/sync');
+                const res = await fetch(`/api/sync?t=${Date.now()}`);
                 if (!res.ok) return;
                 const cloudProducts = await res.json();
                 
-                if (Array.isArray(cloudProducts) && cloudProducts.length > 0) {
+                if (Array.isArray(cloudProducts)) {
+                    // Update even if empty (to allow clearing the menu)
                     const groupProducts = (items) => {
                         const threeDaysAgo = Date.now() - (3 * 24 * 60 * 60 * 1000);
                         const grouped = items.reduce((acc, p) => {

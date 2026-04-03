@@ -79,9 +79,16 @@ const WelcomePopup = () => {
           </div>
           
           <h1 className="animated-title">
-            {title.split("").map((char, index) => (
-              <span key={index} style={{ animationDelay: `${index * 0.05 + 0.5}s` }}>
-                {char === " " ? "\u00A0" : char}
+            {title.split(" ").map((word, wIdx) => (
+              <span key={wIdx} className="word-span">
+                {word.split("").map((char, cIdx) => {
+                  const globalIdx = title.split(" ").slice(0, wIdx).join(" ").length + (wIdx > 0 ? 1 : 0) + cIdx;
+                  return (
+                    <span key={cIdx} style={{ animationDelay: `${globalIdx * 0.05 + 0.5}s` }}>
+                      {char}
+                    </span>
+                  );
+                })}
               </span>
             ))}
           </h1>

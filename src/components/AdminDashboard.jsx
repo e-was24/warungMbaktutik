@@ -5,7 +5,8 @@ const AdminDashboard = ({ onBack }) => {
     const [orders, setOrders] = useState([]);
     const [customProducts, setCustomProducts] = useState([]);
     const [stats, setStats] = useState({ totalOrders: 0, successOrders: 0, totalRevenue: 0, cancelledOrders: 0 });
-    const [newProduct, setNewProduct] = useState({ name: '', price: '', category: 'minuman' });
+    const [newProduct, setNewProduct] = useState({ name: '', price: '', category: 'minuman', image: null });
+    const [imagePreview, setImagePreview] = useState(null);
 
     useEffect(() => {
         loadData();
@@ -30,6 +31,42 @@ const AdminDashboard = ({ onBack }) => {
         setCustomProducts(storedProducts);
     };
 
+    const resizeImage = (file) => {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (e) => {
+                const img = new Image();
+                img.src = e.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 400;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > MAX_WIDTH) {
+                        height *= MAX_WIDTH / width;
+                        width = MAX_WIDTH;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL('image/jpeg', 0.7));
+                };
+            };
+        });
+    };
+
+    const handleImageChange = async (e) => {
+        if (e.target.files[0]) {
+            const resized = await resizeImage(e.target.files[0]);
+            setNewProduct({ ...newProduct, image: resized });
+            setImagePreview(resized);
+        }
+    };
+
     const handleAddProduct = (e) => {
         e.preventDefault();
         if (!newProduct.name || !newProduct.price) return;
@@ -43,7 +80,8 @@ const AdminDashboard = ({ onBack }) => {
         const updatedProducts = [...customProducts, product];
         localStorage.setItem('warung_custom_products', JSON.stringify(updatedProducts));
         setCustomProducts(updatedProducts);
-        setNewProduct({ name: '', price: '', category: 'minuman' });
+        setNewProduct({ name: '', price: '', category: 'minuman', image: null });
+        setImagePreview(null);
         
         // Trigger storage event for other tabs
         window.dispatchEvent(new Event('storage'));
@@ -109,48 +147,86 @@ const AdminDashboard = ({ onBack }) => {
                 {/* Add Product Section */}
                 <div className='admin-section'>
                     <h2>Tambah Produk Baru</h2>
-                    <form className='add-product-bar' onSubmit={handleAddProduct}>
-                        <input 
-                            type='text' 
-                            placeholder='Nama Produk' 
-                            value={newProduct.name}
-                            onChange={e => setNewProduct({...newProduct, name: e.target.value.toUpperCase()})}
-                            required
-                        />
-                        <input 
-                            type='number' 
-                            placeholder='Harga (IDR)' 
-                            value={newProduct.price}
-                            onChange={e => setNewProduct({...newProduct, price: e.target.value})}
-                            required
-                        />
-                        <select 
-                        className='categoryOption'
-                            value={newProduct.category}
-                            onChange={e => setNewProduct({...newProduct, category: e.target.value})}
-                        >
-                            <option value='minuman'>Minuman</option>
-                            <option value='makanan'>Seblak</option>
-                        </select>
-                        <button type='submit' className='add-btn'>Tambah</button>
+                    <form className='add-product-large-form' onSubmit={handleAddProduct}>
+                        <div className='form-main'>
+                            <div className='image-upload-box'>
+                                {imagePreview ? (
+                                    <div className='preview-container'>
+                                        <img src={imagePreview} alt='Preview' />
+                                        <button type='button' className='remove-img' onClick={() => {setImagePreview(null); setNewProduct({...newProduct, image: null})}}>&times;</button>
+                                    </div>
+                                ) : (
+                                    <label className='upload-placeholder'>
+                                        <input type='file' accept='image/*' onChange={handleImageChange} hidden />
+                                        <span>+ Foto</span>
+                                    </label>
+                                )}
+                            </div>
+                            <div className='inputs-area'>
+                                <input 
+                                    type='text' 
+                                    placeholder='Nama Produk (MIsal: Seblak Komplit)' 
+                                    value={newProduct.name}
+                                    onChange={e => setNewProduct({...newProduct, name: e.target.value.toUpperCase()})}
+                                    required
+                                />
+                                <div className='row-inputs'>
+                                    <input 
+                                        type='number' 
+                                        placeholder='Harga (IDR)' 
+                                        value={newProduct.price}
+                                        onChange={e => setNewProduct({...newProduct, price: e.target.value})}
+                                        required
+                                    />
+                                    <select 
+                                        className='categoryOption'
+                                        value={newProduct.category}
+                                        onChange={e => setNewProduct({...newProduct, category: e.target.value})}
+                                    >
+                                        <option value='minuman'>Minuman</option>
+                                        <option value='makanan'>Seblak</option>
+                                    </select>
+                                </div>
+                                <button type='submit' className='add-btn-full'>Tambah Produk ke Menu</button>
+                            </div>
+                        </div>
                     </form>
                 </div>
 
                 {/* Product Management Section */}
                 <div className='admin-section'>
                     <h2>Manajemen Produk Kamu</h2>
-                    <div className='products-grid'>
+                    <div className='grouped-products-grid'>
                         {customProducts.length === 0 ? (
                             <div className='empty-state'>Belum ada produk custom.</div>
                         ) : (
-                            customProducts.map(product => (
-                                <div key={product.id} className='product-item-card'>
-                                    <div className='p-info'>
-                                        <span className='p-name'>{product.name}</span>
-                                        <span className='p-cat'>{product.category}</span>
-                                        <span className='p-price'>Rp {product.price.toLocaleString('id-ID')}</span>
+                            Object.entries(
+                                customProducts.reduce((acc, p) => {
+                                    if (!acc[p.name]) acc[p.name] = [];
+                                    acc[p.name].push(p);
+                                    return acc;
+                                }, {})
+                            ).map(([name, variants]) => (
+                                <div key={name} className='grouped-product-card'>
+                                    <div className='gp-header'>
+                                        {variants[0].image ? (
+                                            <img src={variants[0].image} alt={name} className='gp-img' />
+                                        ) : (
+                                            <div className='gp-img-placeholder'>{name[0]}</div>
+                                        )}
+                                        <div className='gp-info'>
+                                            <span className='gp-name'>{name}</span>
+                                            <span className='gp-cat'>{variants[0].category}</span>
+                                        </div>
                                     </div>
-                                    <button className='delete-p-btn' onClick={() => deleteProduct(product.id)}>&times;</button>
+                                    <div className='gp-variants'>
+                                        {variants.map(v => (
+                                            <div key={v.id} className='gp-variant-row'>
+                                                <span className='v-price'>Rp {v.price.toLocaleString('id-ID')}</span>
+                                                <button className='delete-v-btn' onClick={() => deleteProduct(v.id)}>&times;</button>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
                             ))
                         )}

@@ -122,32 +122,33 @@ const HomePage = ({ onAdminClick }) => {
         const loadCustomProducts = () => {
             const custom = JSON.parse(localStorage.getItem('warung_custom_products') || '[]');
             
-            // Format custom products to match the grid structure
-            // We'll group them into a 'PRODUK BARU' category for now
-            const customMinumanItems = custom.filter(p => p.category === 'minuman');
-            const customMakananItems = custom.filter(p => p.category === 'makanan');
+            // Group by name for the shop display
+            const groupProducts = (items) => {
+                const grouped = items.reduce((acc, p) => {
+                    const name = p.name.toUpperCase();
+                    if (!acc[name]) {
+                        acc[name] = { 
+                            category: name, 
+                            id: `custom-${name}`, 
+                            image: p.image || null,
+                            items: [] 
+                        };
+                    }
+                    acc[name].items.push({ name: name, price: p.price, id: p.id });
+                    // Use the first image found for the group
+                    if (!acc[name].image && p.image) acc[name].image = p.image;
+                    return acc;
+                }, {});
+                return Object.values(grouped);
+            };
 
-            const updatedMinuman = [...initialMinuman];
-            if (customMinumanItems.length > 0) {
-                updatedMinuman.push({
-                    category: 'PRODUK BARU',
-                    id: 'custom-minuman',
-                    image: 'https://images.unsplash.com/photo-1544787210-2211d74fc599?auto=format&fit=crop&q=80&w=800',
-                    items: customMinumanItems
-                });
-            }
+            const customMinuman = groupProducts(custom.filter(p => p.category === 'minuman'));
+            const customMakanan = groupProducts(custom.filter(p => p.category === 'makanan'));
 
-            const updatedMakanan = [...initialMakanan];
-            if (customMakananItems.length > 0) {
-                updatedMakanan.push({
-                    category: 'PRODUK BARU',
-                    id: 'custom-makanan',
-                    image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=800',
-                    items: customMakananItems
-                });
-            }
-
-            setMenuData({ minuman: updatedMinuman, makanan: updatedMakanan });
+            setMenuData({ 
+                minuman: [...initialMinuman, ...customMinuman], 
+                makanan: [...initialMakanan, ...customMakanan] 
+            });
         };
 
         loadCustomProducts();
@@ -302,7 +303,11 @@ const HomePage = ({ onAdminClick }) => {
                     <div key={section.id} className='premium-card-wrapper fade-in-up' style={{animationDelay: `${sIdx * 0.1}s`}}>
                         <div className={`premium-card ${section.id}-theme`}>
                             <div className='card-visual-wrapper'>
-                                <img src={section.image} alt={section.category} className='card-main-img' />
+                                {section.image ? (
+                                    <img src={section.image} alt={section.category} className='card-main-img' />
+                                ) : (
+                                    <div className='card-img-placeholder'>{section.category[0]}</div>
+                                )}
                                 <div className='card-category-tag'>{section.category}</div>
                             </div>
                             

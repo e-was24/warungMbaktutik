@@ -166,10 +166,10 @@ body {
 
 /* Grid Layout */
 .premium-menu-grid {
-    max-width: 1400px;
+    max-width: 1100px;
     margin: 0 auto;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 32px;
     padding: 0 40px;
 }

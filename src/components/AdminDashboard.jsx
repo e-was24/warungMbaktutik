@@ -4,22 +4,31 @@ import './AdminDashboard.css';
 const AdminDashboard = ({ onBack }) => {
     const [orders, setOrders] = useState([]);
     const [customProducts, setCustomProducts] = useState([]);
-    const [stats, setStats] = useState({ totalOrders: 0, totalRevenue: 0 });
+    const [stats, setStats] = useState({ totalOrders: 0, successOrders: 0, totalRevenue: 0, cancelledOrders: 0 });
     const [newProduct, setNewProduct] = useState({ name: '', price: '', category: 'minuman' });
 
     useEffect(() => {
+        loadData();
+    }, []);
+
+    const loadData = () => {
         const storedOrders = JSON.parse(localStorage.getItem('warung_orders') || '[]');
-        setOrders(storedOrders.reverse());
+        setOrders([...storedOrders].reverse());
         
-        const totalRevenue = storedOrders.reduce((sum, order) => sum + order.total, 0);
+        const successOrders = storedOrders.filter(o => o.status !== 'cancelled');
+        const cancelledOrders = storedOrders.filter(o => o.status === 'cancelled');
+        const totalRevenue = successOrders.reduce((sum, order) => sum + order.total, 0);
+
         setStats({
             totalOrders: storedOrders.length,
+            successOrders: successOrders.length,
+            cancelledOrders: cancelledOrders.length,
             totalRevenue: totalRevenue
         });
 
         const storedProducts = JSON.parse(localStorage.getItem('warung_custom_products') || '[]');
         setCustomProducts(storedProducts);
-    }, []);
+    };
 
     const handleAddProduct = (e) => {
         e.preventDefault();
@@ -47,11 +56,25 @@ const AdminDashboard = ({ onBack }) => {
         window.dispatchEvent(new Event('storage'));
     };
 
+    const toggleOrderStatus = (timestamp) => {
+        const storedOrders = JSON.parse(localStorage.getItem('warung_orders') || '[]');
+        const updatedOrders = storedOrders.map(order => {
+            if (order.timestamp === timestamp) {
+                return { 
+                    ...order, 
+                    status: order.status === 'cancelled' ? 'success' : 'cancelled' 
+                };
+            }
+            return order;
+        });
+        localStorage.setItem('warung_orders', JSON.stringify(updatedOrders));
+        loadData();
+    };
+
     const clearData = () => {
         if (window.confirm('Hapus semua riwayat pesanan?')) {
             localStorage.removeItem('warung_orders');
-            setOrders([]);
-            setStats({ totalOrders: 0, totalRevenue: 0 });
+            loadData();
         }
     };
 
@@ -69,9 +92,17 @@ const AdminDashboard = ({ onBack }) => {
                         <span className='stat-label'>Total Pesanan</span>
                         <span className='stat-value'>{stats.totalOrders}</span>
                     </div>
+                    <div className='stat-card success'>
+                        <span className='stat-label'>Berhasil</span>
+                        <span className='stat-value'>{stats.successOrders}</span>
+                    </div>
                     <div className='stat-card accent'>
-                        <span className='stat-label'>Total Pendapatan</span>
+                        <span className='stat-label'>Total Omset</span>
                         <span className='stat-value'>Rp {stats.totalRevenue.toLocaleString('id-ID')}</span>
+                    </div>
+                    <div className='stat-card danger'>
+                        <span className='stat-label'>Dibatalkan</span>
+                        <span className='stat-value'>{stats.cancelledOrders}</span>
                     </div>
                 </div>
 
@@ -126,39 +157,51 @@ const AdminDashboard = ({ onBack }) => {
                 </div>
 
                 <div className='orders-section'>
-                    <h2>Riwayat Pesanan Terbaru</h2>
-                    <div className='orders-table-wrapper'>
+                    <h2>Pesanan Baru (Card Pembelian)</h2>
+                    <div className='orders-cards-grid'>
                         {orders.length === 0 ? (
                             <div className='empty-state'>Belum ada pesanan masuk.</div>
                         ) : (
-                            <table className='orders-table'>
-                                <thead>
-                                    <tr>
-                                        <th>Waktu</th>
-                                        <th>Pelanggan</th>
-                                        <th>Alamat</th>
-                                        <th>Detail Pesanan</th>
-                                        <th>Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {orders.map((order, i) => (
-                                        <tr key={i}>
-                                            <td className='time-td'>{new Date(order.timestamp).toLocaleString('id-ID')}</td>
-                                            <td><strong>{order.customer.name}</strong></td>
-                                            <td className='address-td'>{order.customer.address || '-'}</td>
-                                            <td>
-                                                <ul className='order-items-list'>
-                                                    {order.items.map((item, idx) => (
-                                                        <li key={idx}>{item.name} ({item.quantity}x)</li>
-                                                    ))}
-                                                </ul>
-                                            </td>
-                                            <td className='price-td'>Rp {order.total.toLocaleString('id-ID')}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                            orders.map((order, i) => (
+                                <div key={order.timestamp} className={`order-purchase-card ${order.status === 'cancelled' ? 'is-cancelled' : ''}`}>
+                                    <div className='o-card-header'>
+                                        <div className='o-customer-meta'>
+                                            <span className='o-time'>{new Date(order.timestamp).toLocaleString('id-ID', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' })}</span>
+                                            <h3 className='o-customer-name'>{order.customer.name}</h3>
+                                        </div>
+                                        <div className={`o-status-badge ${order.status === 'cancelled' ? 'bg-danger' : 'bg-success'}`}>
+                                            {order.status === 'cancelled' ? 'DIBATALKAN' : 'BERHASIL'}
+                                        </div>
+                                    </div>
+
+                                    {order.customer.address && (
+                                        <div className='o-address'>📍 {order.customer.address}</div>
+                                    )}
+
+                                    <div className='o-items-container'>
+                                        {order.items.map((item, idx) => (
+                                            <div key={idx} className='o-item-row'>
+                                                <span className='o-item-qty'>{item.quantity}x</span>
+                                                <span className='o-item-name'>{item.name}</span>
+                                                <span className='o-item-price'>Rp {(item.price * item.quantity).toLocaleString('id-ID')}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    <div className='o-card-footer'>
+                                        <div className='o-total-info'>
+                                            <span className='label'>Total Bayar</span>
+                                            <span className='value'>Rp {order.total.toLocaleString('id-ID')}</span>
+                                        </div>
+                                        <button 
+                                            className={`o-action-btn ${order.status === 'cancelled' ? 'restore' : 'cancel'}`}
+                                            onClick={() => toggleOrderStatus(order.timestamp)}
+                                        >
+                                            {order.status === 'cancelled' ? 'Pulihkan' : 'Batalkan'}
+                                        </button>
+                                    </div>
+                                </div>
+                            ))
                         )}
                     </div>
                 </div>

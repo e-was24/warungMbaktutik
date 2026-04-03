@@ -149,6 +149,11 @@ const AdminDashboard = ({ onBack }) => {
     };
 
     const syncToCloud = async () => {
+        if (customProducts.length === 0) {
+            alert('Belum ada menu untuk di-post!');
+            return;
+        }
+
         if (!confirm('Kirim semua data menu saat ini ke Cloud (Internet)? Foto-foto menu juga akan diunggah (proses ini mungkin butuh waktu).')) return;
         
         setIsSyncing(true);
@@ -160,7 +165,12 @@ const AdminDashboard = ({ onBack }) => {
                 // If it's still base64 (local), upload to Blob
                 if (p.image && p.image.startsWith('data:image')) {
                     try {
-                        const res = await fetch(p.image);
+                        // Use a timeout for the fetch to prevent hanging
+                        const controller = new AbortController();
+                        const id = setTimeout(() => controller.abort(), 10000); // 10s timeout
+
+                        const res = await fetch(p.image, { signal: controller.signal });
+                        clearTimeout(id);
                         const blobData = await res.blob();
                         
                         const uploadRes = await fetch('/api/upload', {
@@ -172,6 +182,8 @@ const AdminDashboard = ({ onBack }) => {
                         if (uploadRes.ok) {
                             const result = await uploadRes.json();
                             return { ...p, image: result.url };
+                        } else {
+                            console.warn("Upload failed for", p.name, "falling back to local");
                         }
                     } catch (err) {
                         console.error("Error uploading image for", p.name, err);
@@ -190,15 +202,18 @@ const AdminDashboard = ({ onBack }) => {
                 body: JSON.stringify({ products: updatedProducts })
             });
 
-            if (!response.ok) throw new Error('Gagal sync menu');
+            if (!response.ok) {
+                const errData = await response.json();
+                throw new Error(errData.error || 'Gagal sync menu');
+            }
 
             setSyncStatus('Berhasil di-Post! Foto & Menu Aman ✅');
             loadData(); // Reload to show new URLs
             setTimeout(() => setSyncStatus(''), 5000);
         } catch (error) {
             console.error("Sync Error:", error);
-            setSyncStatus('Gagal Sinkron ❌');
-            alert('Gagal Sinkron: Pastikan Vercel Blob sudah aktif di dashboard kamu.');
+            setSyncStatus(`Gagal: ${error.message} ❌`);
+            alert(`Gagal Sinkron: ${error.message}`);
         } finally {
             setIsSyncing(false);
         }
@@ -248,6 +263,14 @@ const AdminDashboard = ({ onBack }) => {
                             {isSyncing ? 'SEDANG MENYIMPAN...' : 'SIMPAN & UPDATE CLOUD (SINKRON) 🚀'}
                         </button>
                         <p style={{fontSize: '11px', marginTop: '10px', opacity: 0.7}}>* Produk yang kamu hapus juga akan hilang dari HP pembeli setelah klik tombol ini.</p>
+                        {isSyncing && (
+                            <button 
+                                onClick={() => setIsSyncing(false)} 
+                                style={{background: 'none', border: 'none', color: '#ff4444', fontSize: '10px', marginTop: '10px', cursor: 'pointer', textDecoration: 'underline'}}
+                            >
+                                Selesaikan Paksa (Jika Macet)
+                            </button>
+                        )}
                     </div>
                 </div>
 

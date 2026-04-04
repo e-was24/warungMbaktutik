@@ -17,6 +17,13 @@ const HomePage = ({ onAdminClick }) => {
   const [adminClickCount, setAdminClickCount] = useState(0);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [searchTerm, setSearchTerm] = useState("");
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [categoryStatus, setCategoryStatus] = useState({
+    minuman: 'open',
+    makanan: 'open',
+    bakaran: 'open',
+    fashion: 'open'
+  });
 
   const [menuData, setMenuData] = useState({
     minuman: [],
@@ -97,6 +104,11 @@ const HomePage = ({ onAdminClick }) => {
         bakaran: customBakaran,
         fashion: customFashion,
       });
+
+      const storedStatus = JSON.parse(localStorage.getItem('warung_category_status') || '{}');
+      if (Object.keys(storedStatus).length > 0) {
+        setCategoryStatus(prev => ({ ...prev, ...storedStatus }));
+      }
     };
 
     loadCustomProducts();
@@ -137,6 +149,11 @@ const HomePage = ({ onAdminClick }) => {
             bakaran: cloudBakaran,
             fashion: cloudFashion,
           });
+
+          if (cloudData.categoryStatus) {
+            setCategoryStatus(cloudData.categoryStatus);
+            localStorage.setItem('warung_category_status', JSON.stringify(cloudData.categoryStatus));
+          }
 
           localStorage.setItem(
             "warung_custom_products",
@@ -310,47 +327,65 @@ const HomePage = ({ onAdminClick }) => {
           </div>
           <div className="category-switcher">
             <button
-              className={`switch-btn ${activeTab === "minuman" ? "active" : ""}`}
-              onClick={() => setActiveTab("minuman")}
+              className={`switch-btn ${activeTab === "minuman" ? "active" : ""} ${categoryStatus.minuman === 'closed' ? 'is-closed' : ''}`}
+              onClick={() => categoryStatus.minuman === 'open' && setActiveTab("minuman")}
+              disabled={categoryStatus.minuman === 'closed'}
             >
-              🍹 Minuman
+              🍹 Minuman {categoryStatus.minuman === 'closed' && <span className="closed-badge">CLOSED</span>}
             </button>
             <button
-              className={`switch-btn ${activeTab === "makanan" ? "active" : ""}`}
-              onClick={() => setActiveTab("makanan")}
+              className={`switch-btn ${activeTab === "makanan" ? "active" : ""} ${categoryStatus.makanan === 'closed' ? 'is-closed' : ''}`}
+              onClick={() => categoryStatus.makanan === 'open' && setActiveTab("makanan")}
+              disabled={categoryStatus.makanan === 'closed'}
             >
-              🍜 Seblak
+              🍜 Seblak {categoryStatus.makanan === 'closed' && <span className="closed-badge">CLOSED</span>}
             </button>
             <button
-              className={`switch-btn ${activeTab === "bakaran" ? "active" : ""}`}
-              onClick={() => setActiveTab("bakaran")}
+              className={`switch-btn ${activeTab === "bakaran" ? "active" : ""} ${categoryStatus.bakaran === 'closed' ? 'is-closed' : ''}`}
+              onClick={() => categoryStatus.bakaran === 'open' && setActiveTab("bakaran")}
+              disabled={categoryStatus.bakaran === 'closed'}
             >
-              🔥 Bakaran
+              🔥 Bakaran {categoryStatus.bakaran === 'closed' && <span className="closed-badge">CLOSED</span>}
             </button>
             <button
-              className={`switch-btn ${activeTab === "fashion" ? "active" : ""}`}
-              onClick={() => setActiveTab("fashion")}
+              className={`switch-btn ${activeTab === "fashion" ? "active" : ""} ${categoryStatus.fashion === 'closed' ? 'is-closed' : ''}`}
+              onClick={() => categoryStatus.fashion === 'open' && setActiveTab("fashion")}
+              disabled={categoryStatus.fashion === 'closed'}
             >
-              👗 Fashion
+              👗 Fashion {categoryStatus.fashion === 'closed' && <span className="closed-badge">CLOSED</span>}
             </button>
           </div>
-          <div className="premium-search-wrapper">
-            <div className="search-icon-box">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="11" cy="11" r="8" />
-                <path d="m21 21-4.3-4.3" />
-              </svg>
+          <div className={`premium-search-wrapper ${isSearchOpen ? 'expanded' : 'collapsed'}`}>
+            <button className="mobile-search-toggle" onClick={() => setIsSearchOpen(!isSearchOpen)}>
+              {isSearchOpen ? (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="m15 18-6-6 6-6" />
+                </svg>
+              ) : (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="m21 21-4.3-4.3" />
+                </svg>
+              )}
+            </button>
+            <div className="search-input-container">
+              <div className="search-icon-box">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="m21 21-4.3-4.3" />
+                </svg>
+              </div>
+              <input 
+                type="text" 
+                className="premium-search-input" 
+                placeholder={`Cari ${activeTab === 'minuman' ? 'minuman' : (activeTab === 'makanan' ? 'seblak' : (activeTab === 'bakaran' ? 'bakaran' : 'fashion'))}...`}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              {searchTerm && (
+                <button className="clear-search" onClick={() => setSearchTerm("")}>&times;</button>
+              )}
             </div>
-            <input 
-              type="text" 
-              className="premium-search-input" 
-              placeholder={`Cari ${activeTab === 'minuman' ? 'minuman' : (activeTab === 'makanan' ? 'seblak' : (activeTab === 'bakaran' ? 'bakaran' : 'fashion'))} favoritmu...`}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            {searchTerm && (
-              <button className="clear-search" onClick={() => setSearchTerm("")}>&times;</button>
-            )}
           </div>
         </div>
       </header>

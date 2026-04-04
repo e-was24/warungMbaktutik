@@ -61,6 +61,12 @@ const AdminDashboard = ({ onBack }) => {
     const [uploadingGroup, setUploadingGroup] = useState(null);
     const [editingVariant, setEditingVariant] = useState(null); // { id, price, variant }
     const [syncStatus, setSyncStatus] = useState('');
+    const [categoryStatus, setCategoryStatus] = useState({
+        minuman: 'open',
+        makanan: 'open',
+        bakaran: 'open',
+        fashion: 'open'
+    });
 
     useEffect(() => {
         loadData();
@@ -81,6 +87,11 @@ const AdminDashboard = ({ onBack }) => {
                 // If cloud is established, it's the source of truth
                 setCustomProducts(cloudProducts);
                 localStorage.setItem('warung_custom_products', JSON.stringify(cloudProducts));
+                
+                if (cloudData.categoryStatus) {
+                    setCategoryStatus(cloudData.categoryStatus);
+                    localStorage.setItem('warung_category_status', JSON.stringify(cloudData.categoryStatus));
+                }
             }
         } catch (err) {
             console.warn("Could not sync with cloud on mount:", err);
@@ -104,6 +115,11 @@ const AdminDashboard = ({ onBack }) => {
 
         const storedProducts = JSON.parse(localStorage.getItem('warung_custom_products') || '[]');
         setCustomProducts(storedProducts);
+
+        const storedStatus = JSON.parse(localStorage.getItem('warung_category_status') || '{}');
+        if (Object.keys(storedStatus).length > 0) {
+            setCategoryStatus(prev => ({ ...prev, ...storedStatus }));
+        }
     };
 
     const resizeImage = (file) => {
@@ -150,6 +166,7 @@ const AdminDashboard = ({ onBack }) => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
                     products: products,
+                    categoryStatus: categoryStatus,
                     isInitialized: true 
                 })
             });
@@ -373,6 +390,7 @@ const AdminDashboard = ({ onBack }) => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
                     products: updatedProducts,
+                    categoryStatus: categoryStatus,
                     isInitialized: true // Flag to tell HomePage to use ONLY cloud data
                 })
             });
@@ -615,6 +633,34 @@ const AdminDashboard = ({ onBack }) => {
                             ))
                         )}
                     </div>
+                </div>
+
+                {/* Category Status Toggle */}
+                <div className='admin-section category-status-box'>
+                    <h2>Pengaturan Buka/Tutup Toko Per Kategori</h2>
+                    <div className='category-toggles-grid'>
+                        {Object.entries(categoryStatus).map(([cat, status]) => (
+                            <div key={cat} className={`cat-toggle-card ${status}`}>
+                                <div className='cat-toggle-info'>
+                                    <span className='cat-toggle-name'>{cat.toUpperCase()}</span>
+                                    <span className={`cat-toggle-status ${status}`}>
+                                        {status === 'open' ? 'BUKA' : 'TUTUP'}
+                                    </span>
+                                </div>
+                                <button 
+                                    className={`toggle-btn ${status}`}
+                                    onClick={() => {
+                                        const newStatus = { ...categoryStatus, [cat]: status === 'open' ? 'closed' : 'open' };
+                                        setCategoryStatus(newStatus);
+                                        localStorage.setItem('warung_category_status', JSON.stringify(newStatus));
+                                    }}
+                                >
+                                    {status === 'open' ? 'Tutup Kategori' : 'Buka Kategori'}
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                    <p style={{fontSize: '11px', marginTop: '10px', opacity: 0.7}}>* Klik tombol Simpan di atas untuk menerapkan perubahan ini ke pembeli.</p>
                 </div>
 
                 <div className='orders-section'>

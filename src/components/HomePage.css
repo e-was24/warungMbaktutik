@@ -298,13 +298,60 @@ body {
         flex-direction: column;
         gap: 16px;
     }
+    
     .premium-search-wrapper {
         margin-left: 0;
         width: 100%;
         max-width: 400px;
     }
-    .premium-search-wrapper:focus-within {
-        width: 100%;
+    
+    /* Collapsible Search on Mobile */
+    .premium-search-wrapper.collapsed {
+        width: 42px !important;
+        padding: 0;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .premium-search-wrapper.collapsed .search-input-container {
+        display: none;
+    }
+    
+    .premium-search-wrapper.expanded {
+        width: 100% !important;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        height: 60px;
+        background: var(--p-bg);
+        border-radius: 0;
+        margin: 0;
+        border: none;
+        border-bottom: 1px solid var(--p-border);
+        padding: 0 20px;
+    }
+    
+    .premium-search-wrapper.expanded .mobile-search-toggle {
+        color: var(--p-accent);
+    }
+    
+    .mobile-search-toggle {
+        display: flex;
+        background: transparent;
+        border: none;
+        color: var(--p-text-muted);
+        cursor: pointer;
+        padding: 10px;
+        outline: none;
+    }
+    
+    .premium-search-wrapper.expanded .search-input-container {
+        display: flex;
+        flex: 1;
+        align-items: center;
     }
 }
 
@@ -1121,3 +1168,131 @@ body {
         padding: 24px;
     }
 }
+
+.mobile-search-toggle {
+    display: none;
+}
+
+.search-input-container {
+    display: flex;
+    flex: 1;
+    align-items: center;
+}
+
+/* Closed Category Styles */
+.switch-btn.is-closed {
+    opacity: 0.5;
+    cursor: not-allowed !important;
+    background: rgba(255, 255, 255, 0.02) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.closed-badge {
+    font-size: 9px;
+    background: #ff4444;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 8px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    box-shadow: 0 0 10px rgba(255, 68, 68, 0.3);
+}
+
+/* Admin Dashboard New Styles */
+.category-status-box {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 20px;
+    border-radius: 20px;
+    margin-bottom: 40px;
+}
+
+.category-toggles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.cat-toggle-card {
+    background: rgba(255, 255, 255, 0.04);
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition: all 0.3s ease;
+}
+
+.cat-toggle-card.open {
+    border-left: 4px solid #4ade80;
+}
+
+.cat-toggle-card.closed {
+    border-left: 4px solid #f87171;
+    opacity: 0.8;
+}
+
+.cat-toggle-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cat-toggle-name {
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: 1px;
+    color: var(--p-text-muted);
+}
+
+.cat-toggle-status {
+    font-size: 9px;
+    font-weight: 900;
+    padding: 3px 8px;
+    border-radius: 4px;
+}
+
+.cat-toggle-status.open {
+    background: rgba(74, 222, 128, 0.15);
+    color: #4ade80;
+}
+
+.cat-toggle-status.closed {
+    background: rgba(248, 113, 113, 0.15);
+    color: #f87171;
+}
+
+.toggle-btn {
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 700;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.toggle-btn.open {
+    background: rgba(248, 113, 113, 0.1);
+    color: #f87171;
+    border: 1px solid rgba(248, 113, 113, 0.2);
+}
+
+.toggle-btn.open:hover {
+    background: #f87171;
+    color: white;
+}
+
+.toggle-btn.closed {
+    background: rgba(74, 222, 128, 0.1);
+    color: #4ade80;
+    border: 1px solid rgba(74, 222, 128, 0.2);
+}
+
+.toggle-btn.closed:hover {
+    background: #4ade80;
+    color: white;
+}

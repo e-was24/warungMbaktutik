@@ -327,8 +327,44 @@ body {
         border: none;
         color: white;
         cursor: pointer;
-        padding: 8px;
-        transition: transform 0.3s ease;
+        padding: 5px;
+        transition: all 0.3s ease;
+        z-index: 10002;
+    }
+
+    .menu-toggle-svg {
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .icon-plate {
+        transition: all 0.4s ease;
+        transform-origin: 8px 12px;
+    }
+
+    .icon-spoon, .icon-fork {
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        transform-origin: center;
+    }
+
+    .mobile-menu-toggle.active .icon-plate {
+        opacity: 0;
+        transform: scale(0);
+    }
+
+    .mobile-menu-toggle.active .icon-spoon {
+        transform: translate(-7px, 0) rotate(45deg) translate(7px, 0) scaleY(1.2);
+        d: path("M12 6l0 12"); /* Some browsers support 'd' in CSS, but transform is safer */
+    }
+
+    /* Standard way to make X using transforms on straight lines */
+    .mobile-menu-toggle.active .icon-spoon {
+        transform: translateX(-7px) translateY(0) rotate(45deg);
+        transform-origin: 12px 12px;
+    }
+
+    .mobile-menu-toggle.active .icon-fork {
+        transform: translateX(-10px) translateY(0) rotate(-45deg);
+        transform-origin: 12px 12px;
     }
 
     .nav-brand {

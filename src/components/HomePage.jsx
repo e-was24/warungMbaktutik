@@ -339,18 +339,12 @@ const HomePage = ({ onAdminClick }) => {
 
       <header className={`premium-nav ${scrolled ? "scrolled" : ""}`}>
         <div className="nav-content">
-          <button className="mobile-menu-toggle" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            {isMenuOpen ? (
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
-              </svg>
-            ) : (
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="9" cy="12" r="7" /> {/* Plate */}
-                <path d="M19 5v14" /> {/* Knife/Spoon handle */}
-                <path d="M22 8v8" /> {/* Fork/Spoon handle */}
-              </svg>
-            )}
+          <button className={`mobile-menu-toggle ${isMenuOpen ? 'active' : ''}`} onClick={() => setIsMenuOpen(!isMenuOpen)}>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="menu-toggle-svg">
+              <circle cx="8" cy="12" r="7" className="icon-plate" />
+              <path d="M19 5v14" className="icon-spoon" />
+              <path d="M22 8v8" className="icon-fork" />
+            </svg>
           </button>
 
           <div className="nav-brand" onClick={() => setAdminClickCount(c => c + 1)}>

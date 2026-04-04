@@ -71,6 +71,10 @@ const AdminDashboard = ({ onBack }) => {
     useEffect(() => {
         loadData();
         fetchCloudData(); // Pull latest from Vercel Blob to stay synced
+        
+        // Add polling for new orders (every 30 seconds)
+        const interval = setInterval(fetchCloudData, 30000);
+        return () => clearInterval(interval);
     }, []);
 
     const fetchCloudData = async () => {
@@ -91,6 +95,23 @@ const AdminDashboard = ({ onBack }) => {
                 if (cloudData.categoryStatus) {
                     setCategoryStatus(cloudData.categoryStatus);
                     localStorage.setItem('warung_category_status', JSON.stringify(cloudData.categoryStatus));
+                }
+
+                if (cloudData.orders) {
+                    setOrders([...cloudData.orders].reverse());
+                    localStorage.setItem('warung_orders', JSON.stringify(cloudData.orders));
+                    
+                    // Re-calculate stats based on cloud orders
+                    const successOrders = cloudData.orders.filter(o => o.status !== 'cancelled');
+                    const cancelledOrders = cloudData.orders.filter(o => o.status === 'cancelled');
+                    const totalRevenue = successOrders.reduce((sum, order) => sum + order.total, 0);
+
+                    setStats({
+                        totalOrders: cloudData.orders.length,
+                        successOrders: successOrders.length,
+                        cancelledOrders: cancelledOrders.length,
+                        totalRevenue: totalRevenue
+                    });
                 }
             }
         } catch (err) {
@@ -292,18 +313,32 @@ const AdminDashboard = ({ onBack }) => {
         }
     };
 
-    const toggleOrderStatus = (timestamp) => {
+    const toggleOrderStatus = async (timestamp) => {
         const storedOrders = JSON.parse(localStorage.getItem('warung_orders') || '[]');
+        let newStatus = 'success';
         const updatedOrders = storedOrders.map(order => {
             if (order.timestamp === timestamp) {
-                return { 
-                    ...order, 
-                    status: order.status === 'cancelled' ? 'success' : 'cancelled' 
-                };
+                newStatus = order.status === 'cancelled' ? 'success' : 'cancelled';
+                return { ...order, status: newStatus };
             }
             return order;
         });
+
         localStorage.setItem('warung_orders', JSON.stringify(updatedOrders));
+        
+        // Push status update to Cloud
+        try {
+            await fetch('/api/sync', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    action: 'update_order_status',
+                    timestamp: timestamp,
+                    status: newStatus
+                })
+            });
+        } catch (err) { console.error("Cloud order status update failed", err); }
+
         loadData();
     };
 

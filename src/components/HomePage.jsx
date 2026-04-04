@@ -156,6 +156,10 @@ const HomePage = ({ onAdminClick }) => {
             localStorage.setItem('warung_category_status', JSON.stringify(cloudData.categoryStatus));
           }
 
+          if (cloudData.orders) {
+            localStorage.setItem('warung_orders', JSON.stringify(cloudData.orders));
+          }
+
           localStorage.setItem(
             "warung_custom_products",
             JSON.stringify(cloudProducts),
@@ -283,13 +287,25 @@ const HomePage = ({ onAdminClick }) => {
 
     const encodedMessage = encodeURIComponent(message);
 
-    // Save to localStorage (Admin Tracking)
+    // Save to Cloud (Database)
     const newOrder = {
       timestamp: new Date().toISOString(),
       customer: customerInfo,
       items: Object.values(cart),
       total: getTotalPrice(),
+      status: 'success'
     };
+
+    fetch('/api/sync', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        action: 'add_order',
+        order: newOrder
+      })
+    }).catch(err => console.warn("Cloud Order Sync Failed:", err));
+
+    // Fallback to localStorage (Admin Tracking - local only)
     const existingOrders = JSON.parse(
       localStorage.getItem("warung_orders") || "[]",
     );

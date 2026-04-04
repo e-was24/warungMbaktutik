@@ -347,7 +347,7 @@ body {
         left: 0;
         width: 100% !important;
         height: 70px;
-        z-index: 9999;
+        z-index: 100000;
         background: #08060d;
         border-radius: 0;
         padding: 0 15px;
@@ -355,7 +355,8 @@ body {
         border-bottom: 1px solid var(--p-border);
         display: flex;
         align-items: center;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+        box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+        pointer-events: auto;
     }
     
     .mobile-search-toggle {
@@ -1217,16 +1218,24 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.closed-badge {
-    font-size: 9px;
+.closed-icon-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     background: #ff4444;
     color: white;
-    padding: 2px 6px;
-    border-radius: 4px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
     margin-left: 8px;
-    font-weight: 900;
-    letter-spacing: 0.5px;
-    box-shadow: 0 0 10px rgba(255, 68, 68, 0.3);
+    box-shadow: 0 0 10px rgba(255, 68, 68, 0.4);
+    animation: pulseIcon 2s infinite;
+}
+
+@keyframes pulseIcon {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.7); }
+    70% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(255, 68, 68, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 68, 68, 0); }
 }
 
 /* Admin Dashboard New Styles */

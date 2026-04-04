@@ -348,28 +348,52 @@ const HomePage = ({ onAdminClick }) => {
               onClick={() => categoryStatus.minuman === 'open' && setActiveTab("minuman")}
               disabled={categoryStatus.minuman === 'closed'}
             >
-              🍹 Minuman {categoryStatus.minuman === 'closed' && <span className="closed-badge">CLOSED</span>}
+              🍹 Minuman {categoryStatus.minuman === 'closed' && (
+                <span className="closed-icon-badge">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                    <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                  </svg>
+                </span>
+              )}
             </button>
             <button
               className={`switch-btn ${activeTab === "makanan" ? "active" : ""} ${categoryStatus.makanan === 'closed' ? 'is-closed' : ''}`}
               onClick={() => categoryStatus.makanan === 'open' && setActiveTab("makanan")}
               disabled={categoryStatus.makanan === 'closed'}
             >
-              🍜 Seblak {categoryStatus.makanan === 'closed' && <span className="closed-badge">CLOSED</span>}
+              🍜 Seblak {categoryStatus.makanan === 'closed' && (
+                <span className="closed-icon-badge">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                    <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                  </svg>
+                </span>
+              )}
             </button>
             <button
               className={`switch-btn ${activeTab === "bakaran" ? "active" : ""} ${categoryStatus.bakaran === 'closed' ? 'is-closed' : ''}`}
               onClick={() => categoryStatus.bakaran === 'open' && setActiveTab("bakaran")}
               disabled={categoryStatus.bakaran === 'closed'}
             >
-              🔥 Bakaran {categoryStatus.bakaran === 'closed' && <span className="closed-badge">CLOSED</span>}
+              🔥 Bakaran {categoryStatus.bakaran === 'closed' && (
+                <span className="closed-icon-badge">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                    <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                  </svg>
+                </span>
+              )}
             </button>
             <button
               className={`switch-btn ${activeTab === "fashion" ? "active" : ""} ${categoryStatus.fashion === 'closed' ? 'is-closed' : ''}`}
               onClick={() => categoryStatus.fashion === 'open' && setActiveTab("fashion")}
               disabled={categoryStatus.fashion === 'closed'}
             >
-              👗 Fashion {categoryStatus.fashion === 'closed' && <span className="closed-badge">CLOSED</span>}
+              👗 Fashion {categoryStatus.fashion === 'closed' && (
+                <span className="closed-icon-badge">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                    <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                  </svg>
+                </span>
+              )}
             </button>
           </div>
 

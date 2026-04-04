@@ -9,6 +9,8 @@ import fashionHeroBg from "../assets/fashion_hero.png";
 const WHATSAPP_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || "6281217819691";
 
 const HomePage = ({ onAdminClick }) => {
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [cart, setCart] = useState({});
   const [scrolled, setScrolled] = useState(false);
   const [activeTab, setActiveTab] = useState("minuman"); // 'minuman', 'makanan', 'bakaran', or 'fashion'
@@ -338,6 +340,18 @@ const HomePage = ({ onAdminClick }) => {
 
       <header className={`premium-nav ${scrolled ? "scrolled" : ""}`}>
         <div className="nav-content">
+          <button className="mobile-menu-toggle" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+            {isMenuOpen ? (
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+              </svg>
+            ) : (
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 2v20"/><path d="M2 12c0-4.4 3.6-8 8-8V2"/><path d="M22 12c0 4.4-3.6 8-8 8v2"/><path d="M15 6s1 0 1 1.5V10c0 1.5-1 1.5-1 1.5s1 0 1 1.5V16c0 1.5-1 1.5-1 1.5"/><path d="M9 17.5s-1 0-1-1.5V13c0-1.5 1-1.5 1-1.5s-1 0-1-1.5V7.5c0-1.5 1-1.5 1-1.5"/>
+              </svg>
+            )}
+          </button>
+
           <div className="nav-brand" onClick={() => setAdminClickCount(c => c + 1)}>
             <span className="brand-accent">W</span>arung <span>M</span>bk Tutik
           </div>
@@ -431,6 +445,53 @@ const HomePage = ({ onAdminClick }) => {
           </div>
         </div>
       </header>
+
+      {/* Mobile Sidebar */}
+      <div className={`sidebar-overlay ${isMenuOpen ? 'active' : ''}`} onClick={() => setIsMenuOpen(false)}></div>
+      <aside className={`mobile-sidebar ${isMenuOpen ? 'open' : ''}`}>
+        <div className="sidebar-header">
+          <div className="sidebar-brand">
+            <span className="brand-accent">W</span>arung <span>M</span>bk Tutik
+          </div>
+        </div>
+        <nav className="sidebar-nav">
+          <button 
+            className={`sidebar-link ${activeTab === 'minuman' ? 'active' : ''} ${categoryStatus.minuman === 'closed' ? 'is-closed' : ''}`}
+            onClick={() => { if(categoryStatus.minuman === 'open') { setActiveTab('minuman'); setIsMenuOpen(false); } }}
+          >
+            <span className="link-icon">🍹</span>
+            <span className="link-text">Minuman</span>
+            {categoryStatus.minuman === 'closed' && <span className="closed-icon-badge small"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>}
+          </button>
+          <button 
+            className={`sidebar-link ${activeTab === 'makanan' ? 'active' : ''} ${categoryStatus.makanan === 'closed' ? 'is-closed' : ''}`}
+            onClick={() => { if(categoryStatus.makanan === 'open') { setActiveTab('makanan'); setIsMenuOpen(false); } }}
+          >
+            <span className="link-icon">🍜</span>
+            <span className="link-text">Seblak Prasmanan</span>
+            {categoryStatus.makanan === 'closed' && <span className="closed-icon-badge small"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>}
+          </button>
+          <button 
+            className={`sidebar-link ${activeTab === 'bakaran' ? 'active' : ''} ${categoryStatus.bakaran === 'closed' ? 'is-closed' : ''}`}
+            onClick={() => { if(categoryStatus.bakaran === 'open') { setActiveTab('bakaran'); setIsMenuOpen(false); } }}
+          >
+            <span className="link-icon">🔥</span>
+            <span className="link-text">Bakaran</span>
+            {categoryStatus.bakaran === 'closed' && <span className="closed-icon-badge small"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>}
+          </button>
+          <button 
+            className={`sidebar-link ${activeTab === 'fashion' ? 'active' : ''} ${categoryStatus.fashion === 'closed' ? 'is-closed' : ''}`}
+            onClick={() => { if(categoryStatus.fashion === 'open') { setActiveTab('fashion'); setIsMenuOpen(false); } }}
+          >
+            <span className="link-icon">👗</span>
+            <span className="link-text">Fashion</span>
+            {categoryStatus.fashion === 'closed' && <span className="closed-icon-badge small"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>}
+          </button>
+        </nav>
+        <div className="sidebar-footer">
+          <p>© 2024 Warung Mbk Tutik</p>
+        </div>
+      </aside>
 
       <section className="premium-hero">
         <div

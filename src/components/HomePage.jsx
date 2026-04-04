@@ -341,9 +341,9 @@ const HomePage = ({ onAdminClick }) => {
         <div className="nav-content">
           <button className={`mobile-menu-toggle ${isMenuOpen ? 'active' : ''}`} onClick={() => setIsMenuOpen(!isMenuOpen)}>
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="menu-toggle-svg">
-              <circle cx="8" cy="12" r="6" className="icon-plate" />
-              <path d="M15 11v8M15 11c1.1 0 2-1 2-2.5S16.1 6 15 6s-2 1-2 2.5 0.9 2.5 2 2.5z" className="icon-spoon" />
-              <path d="M20 11v8M18 6v3a2 2 0 0 0 4 0V6M20 6v3" className="icon-fork" />
+              <path d="M3 9l9-7 9 7" className="icon-roof" />
+              <path d="M5 9v11a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9" className="icon-body" />
+              <path d="M9 22V12h6v10" className="icon-door" />
             </svg>
           </button>
 
@@ -450,9 +450,9 @@ const HomePage = ({ onAdminClick }) => {
           </div>
           <button className={`mobile-menu-toggle sidebar-toggle-btn ${isMenuOpen ? 'active' : ''}`} onClick={() => setIsMenuOpen(false)}>
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="menu-toggle-svg">
-              <circle cx="8" cy="12" r="6" className="icon-plate" />
-              <path d="M15 11v8M15 11c1.1 0 2-1 2-2.5S16.1 6 15 6s-2 1-2 2.5 0.9 2.5 2 2.5z" className="icon-spoon" />
-              <path d="M20 11v8M18 6v3a2 2 0 0 0 4 0V6M20 6v3" className="icon-fork" />
+              <path d="M3 9l9-7 9 7" className="icon-roof" />
+              <path d="M5 9v11a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9" className="icon-body" />
+              <path d="M9 22V12h6v10" className="icon-door" />
             </svg>
           </button>
         </div>

@@ -345,8 +345,10 @@ const HomePage = ({ onAdminClick }) => {
                 <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
               </svg>
             ) : (
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 2v20"/><path d="M2 12c0-4.4 3.6-8 8-8V2"/><path d="M22 12c0 4.4-3.6 8-8 8v2"/><path d="M15 6s1 0 1 1.5V10c0 1.5-1 1.5-1 1.5s1 0 1 1.5V16c0 1.5-1 1.5-1 1.5"/><path d="M9 17.5s-1 0-1-1.5V13c0-1.5 1-1.5 1-1.5s-1 0-1-1.5V7.5c0-1.5 1-1.5 1-1.5"/>
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="9" cy="12" r="7" /> {/* Plate */}
+                <path d="M19 5v14" /> {/* Knife/Spoon handle */}
+                <path d="M22 8v8" /> {/* Fork/Spoon handle */}
               </svg>
             )}
           </button>
@@ -452,6 +454,11 @@ const HomePage = ({ onAdminClick }) => {
           <div className="sidebar-brand">
             <span className="brand-accent">W</span>arung <span>M</span>bk Tutik
           </div>
+          <button className="sidebar-close-btn" onClick={() => setIsMenuOpen(false)}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+            </svg>
+          </button>
         </div>
 
         <div className="sidebar-search-box">

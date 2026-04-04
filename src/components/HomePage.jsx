@@ -167,9 +167,25 @@ const HomePage = ({ onAdminClick }) => {
 
     fetchCloudData();
 
+    // Check for updates every 30 seconds
+    const interval = setInterval(fetchCloudData, 30000);
+
     window.addEventListener("storage", loadCustomProducts);
-    return () => window.removeEventListener("storage", loadCustomProducts);
+    return () => {
+      window.removeEventListener("storage", loadCustomProducts);
+      clearInterval(interval);
+    };
   }, []);
+
+  // Auto-switch away from CLOSED categories
+  useEffect(() => {
+    if (categoryStatus[activeTab] === 'closed') {
+      const firstOpen = Object.entries(categoryStatus).find(([cat, status]) => status === 'open');
+      if (firstOpen) {
+        setActiveTab(firstOpen[0]);
+      }
+    }
+  }, [categoryStatus, activeTab]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -322,43 +338,8 @@ const HomePage = ({ onAdminClick }) => {
 
       <header className={`premium-nav ${scrolled ? "scrolled" : ""}`}>
         <div className="nav-content">
-          <div className="nav-top-row">
-            <div className="nav-brand" onClick={() => setAdminClickCount(c => c + 1)}>
-              <span className="brand-accent">W</span>arung <span>M</span>bk Tutik
-            </div>
-
-            <div className={`premium-search-wrapper ${isSearchOpen ? 'expanded' : 'collapsed'}`}>
-              <button className="mobile-search-toggle" onClick={() => setIsSearchOpen(!isSearchOpen)}>
-                {isSearchOpen ? (
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="m15 18-6-6 6-6" />
-                  </svg>
-                ) : (
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="11" cy="11" r="8" />
-                    <path d="m21 21-4.3-4.3" />
-                  </svg>
-                )}
-              </button>
-              <div className="search-input-container">
-                <div className="search-icon-box">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="11" cy="11" r="8" />
-                    <path d="m21 21-4.3-4.3" />
-                  </svg>
-                </div>
-                <input 
-                  type="text" 
-                  className="premium-search-input" 
-                  placeholder={`Cari ${activeTab === 'minuman' ? 'minuman' : (activeTab === 'makanan' ? 'seblak' : (activeTab === 'bakaran' ? 'bakaran' : 'fashion'))}...`}
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-                {searchTerm && (
-                  <button className="clear-search" onClick={() => setSearchTerm("")}>&times;</button>
-                )}
-              </div>
-            </div>
+          <div className="nav-brand" onClick={() => setAdminClickCount(c => c + 1)}>
+            <span className="brand-accent">W</span>arung <span>M</span>bk Tutik
           </div>
 
           <div className="category-switcher">
@@ -390,6 +371,39 @@ const HomePage = ({ onAdminClick }) => {
             >
               👗 Fashion {categoryStatus.fashion === 'closed' && <span className="closed-badge">CLOSED</span>}
             </button>
+          </div>
+
+          <div className={`premium-search-wrapper ${isSearchOpen ? 'expanded' : 'collapsed'}`}>
+            <button className="mobile-search-toggle" onClick={() => setIsSearchOpen(!isSearchOpen)}>
+              {isSearchOpen ? (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="m15 18-6-6 6-6" />
+                </svg>
+              ) : (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="m21 21-4.3-4.3" />
+                </svg>
+              )}
+            </button>
+            <div className="search-input-container">
+              <div className="search-icon-box">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="m21 21-4.3-4.3" />
+                </svg>
+              </div>
+              <input 
+                type="text" 
+                className="premium-search-input" 
+                placeholder={`Cari ${activeTab === 'minuman' ? 'minuman' : (activeTab === 'makanan' ? 'seblak' : (activeTab === 'bakaran' ? 'bakaran' : 'fashion'))}...`}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              {searchTerm && (
+                <button className="clear-search" onClick={() => setSearchTerm("")}>&times;</button>
+              )}
+            </div>
           </div>
         </div>
       </header>

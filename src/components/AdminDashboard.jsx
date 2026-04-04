@@ -158,7 +158,7 @@ const AdminDashboard = ({ onBack }) => {
         }
     };
 
-    const pushToCloud = async (products) => {
+    const pushToCloud = async (products, updatedStatus) => {
         setSyncStatus('Auto-Saving...');
         try {
             const response = await fetch('/api/sync', {
@@ -166,7 +166,7 @@ const AdminDashboard = ({ onBack }) => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
                     products: products,
-                    categoryStatus: categoryStatus,
+                    categoryStatus: updatedStatus || categoryStatus,
                     isInitialized: true 
                 })
             });
@@ -653,6 +653,7 @@ const AdminDashboard = ({ onBack }) => {
                                         const newStatus = { ...categoryStatus, [cat]: status === 'open' ? 'closed' : 'open' };
                                         setCategoryStatus(newStatus);
                                         localStorage.setItem('warung_category_status', JSON.stringify(newStatus));
+                                        pushToCloud(customProducts, newStatus);
                                     }}
                                 >
                                     {status === 'open' ? 'Tutup Kategori' : 'Buka Kategori'}

@@ -964,6 +964,114 @@
     }
 }
 
+/* --- Premium Sync Notification --- */
+.sync-notification {
+    position: fixed;
+    z-index: 20000;
+    padding: 1px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, rgba(170, 59, 255, 0.3), rgba(6, 182, 212, 0.3));
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    animation: sn-slide-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Responsive Position */
+@media (min-width: 769px) {
+    .sync-notification {
+        top: 30px;
+        right: 30px;
+        width: 380px;
+    }
+}
+
+@media (max-width: 768px) {
+    .sync-notification {
+        top: 20px;
+        left: 5%;
+        width: 90%;
+        animation: sn-slide-down 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+}
+
+.sn-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    background: rgba(15, 16, 18, 0.85);
+    border-radius: 17px;
+}
+
+.sn-spinner {
+    width: 24px;
+    height: 24px;
+    border: 3px solid rgba(170, 59, 255, 0.2);
+    border-top: 3px solid #aa3bff;
+    border-radius: 50%;
+    animation: sn-spin 0.8s linear infinite;
+}
+
+.sn-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 14px;
+}
+
+.sync-notification.success .sn-icon {
+    background: #10b981;
+    color: white;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+}
+
+.sync-notification.error .sn-icon {
+    background: #ef4444;
+    color: white;
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+}
+
+.sn-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.sn-title {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #9ca3af;
+}
+
+.sn-msg {
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+}
+
+@keyframes sn-spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes sn-slide-in {
+    from { opacity: 0; transform: translateX(50px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes sn-slide-down {
+    from { opacity: 0; transform: translateY(-50px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+
 /* --- Status Save Footer --- */
 .status-save-footer {
     margin-top: 25px;

@@ -67,6 +67,7 @@ const AdminDashboard = ({ onBack }) => {
         bakaran: 'open',
         fashion: 'open'
     });
+    const [syncNotification, setSyncNotification] = useState({ show: false, message: '', type: 'loading' });
 
     useEffect(() => {
         loadData();
@@ -180,7 +181,7 @@ const AdminDashboard = ({ onBack }) => {
     };
 
     const pushToCloud = async (products, updatedStatus) => {
-        setSyncStatus('Auto-Saving...');
+        setSyncNotification({ show: true, message: 'Menghubungkan ke Database...', type: 'loading' });
         try {
             const response = await fetch('/api/sync', {
                 method: 'POST',
@@ -192,12 +193,13 @@ const AdminDashboard = ({ onBack }) => {
                 })
             });
             if (response.ok) {
-                setSyncStatus('Tersimpan di Cloud ✅');
-                setTimeout(() => setSyncStatus(''), 3000);
+                setSyncNotification({ show: true, message: 'Sinkronisasi Berhasil!', type: 'success' });
+                setTimeout(() => setSyncNotification(prev => ({ ...prev, show: false })), 3000);
             }
         } catch (err) {
             console.error("Auto-sync failed", err);
-            setSyncStatus('Gagal Simpan ke Cloud ❌');
+            setSyncNotification({ show: true, message: 'Gagal Sinkronisasi!', type: 'error' });
+            setTimeout(() => setSyncNotification(prev => ({ ...prev, show: false })), 4000);
         }
     };
 
@@ -327,8 +329,9 @@ const AdminDashboard = ({ onBack }) => {
         localStorage.setItem('warung_orders', JSON.stringify(updatedOrders));
         
         // Push status update to Cloud
+        setSyncNotification({ show: true, message: 'Memperbarui Status Pesanan...', type: 'loading' });
         try {
-            await fetch('/api/sync', {
+            const res = await fetch('/api/sync', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
@@ -337,7 +340,15 @@ const AdminDashboard = ({ onBack }) => {
                     status: newStatus
                 })
             });
-        } catch (err) { console.error("Cloud order status update failed", err); }
+            if (res.ok) {
+                setSyncNotification({ show: true, message: 'Status Terupdate di Cloud!', type: 'success' });
+                setTimeout(() => setSyncNotification(prev => ({ ...prev, show: false })), 2500);
+            }
+        } catch (err) { 
+            console.error("Cloud order status update failed", err);
+            setSyncNotification({ show: true, message: 'Gagal Update Status!', type: 'error' });
+            setTimeout(() => setSyncNotification(prev => ({ ...prev, show: false })), 4000);
+        }
 
         loadData();
     };
@@ -436,16 +447,21 @@ const AdminDashboard = ({ onBack }) => {
                 throw new Error(diag);
             }
 
-            setSyncStatus('Berhasil di-Post! Foto & Menu Aman ✅');
+            setSyncNotification({ show: true, message: 'Berhasil di-Update ke Database!', type: 'success' });
             loadData(); // Reload to show new URLs
-            setTimeout(() => setSyncStatus(''), 5000);
+            setTimeout(() => setSyncNotification(prev => ({ ...prev, show: false })), 5000);
         } catch (error) {
             console.error("Sync Error:", error);
-            setSyncStatus(`Gagal Sync ❌`);
+            setSyncNotification({ show: true, message: 'Gagal Sinkronisasi!', type: 'error' });
             alert(`SINKRONISASI GAGAL!${error.message}`);
+            setTimeout(() => setSyncNotification(prev => ({ ...prev, show: false })), 5000);
         } finally {
             setIsSyncing(false);
         }
+    };
+
+    const syncStatusManual = () => {
+        pushToCloud(customProducts, categoryStatus);
     };
 
     return (
@@ -457,6 +473,25 @@ const AdminDashboard = ({ onBack }) => {
             </nav>
 
             <main className='admin-content'>
+                {/* Notification Popup */}
+                {syncNotification.show && (
+                    <div className={`sync-notification ${syncNotification.type}`}>
+                        <div className="sn-content">
+                            {syncNotification.type === 'loading' ? (
+                                <div className="sn-spinner"></div>
+                            ) : (
+                                <div className="sn-icon">
+                                    {syncNotification.type === 'success' ? '✓' : '!'}
+                                </div>
+                            )}
+                            <div className="sn-text">
+                                <span className="sn-title">Cloud Synchronization</span>
+                                <span className="sn-msg">{syncNotification.message}</span>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
                 <div className='stats-grid'>
                     <div className='stat-card'>
                         <span className='stat-label'>Total Pesanan</span>
@@ -701,7 +736,7 @@ const AdminDashboard = ({ onBack }) => {
                         <p>* Status akan otomatis tersimpan, namun anda bisa klik tombol di bawah untuk memastikan.</p>
                         <button 
                             className="save-status-btn-manual" 
-                            onClick={() => pushToCloud(customProducts, categoryStatus)}
+                            onClick={syncStatusManual}
                         >
                             SINKRONISASI STATUS KE GOOGLE/DATABASE ☁️
                         </button>

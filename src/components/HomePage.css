@@ -347,12 +347,12 @@ body {
     }
 
     .mobile-menu-toggle.active .hb-line-1 {
-        transform: translateY(6px) rotate(45deg);
+        transform: translateY(7px) rotate(45deg);
         transform-origin: 12px 12px;
     }
 
     .mobile-menu-toggle.active .hb-line-3 {
-        transform: translateY(-6px) rotate(-45deg);
+        transform: translateY(-7px) rotate(-45deg);
         transform-origin: 12px 12px;
     }
 

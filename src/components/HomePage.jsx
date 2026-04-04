@@ -25,6 +25,11 @@ const HomePage = ({ onAdminClick }) => {
     bakaran: { status: 'open', lastUpdated: Date.now() },
     fashion: { status: 'open', lastUpdated: Date.now() }
   });
+  const [autoSchedule, setAutoSchedule] = useState({
+    enabled: false,
+    openTime: '09:00',
+    closeTime: '19:00'
+  });
 
   const [menuData, setMenuData] = useState({
     minuman: [],
@@ -106,10 +111,8 @@ const HomePage = ({ onAdminClick }) => {
         fashion: customFashion,
       });
 
-      const storedStatus = JSON.parse(localStorage.getItem('warung_category_status') || '{}');
-      if (Object.keys(storedStatus).length > 0) {
-        setCategoryStatus(prev => ({ ...prev, ...storedStatus }));
-      }
+      const storedSchedule = JSON.parse(localStorage.getItem('warung_auto_schedule') || '{}');
+      if (storedSchedule.enabled !== undefined) setAutoSchedule(storedSchedule);
     };
 
     loadCustomProducts();
@@ -160,10 +163,10 @@ const HomePage = ({ onAdminClick }) => {
             localStorage.setItem('warung_orders', JSON.stringify(cloudData.orders));
           }
 
-          localStorage.setItem(
-            "warung_custom_products",
-            JSON.stringify(cloudProducts),
-          );
+          if (cloudData.autoSchedule) {
+            setAutoSchedule(cloudData.autoSchedule);
+            localStorage.setItem('warung_auto_schedule', JSON.stringify(cloudData.autoSchedule));
+          }
         }
       } catch (err) {
         console.warn("Cloud Sync Offline:", err);
@@ -215,10 +218,20 @@ const HomePage = ({ onAdminClick }) => {
 
   const getStatusString = (cat) => {
     const data = categoryStatus[cat];
-    return typeof data === 'string' ? data : data?.status;
+    let status = typeof data === 'string' ? data : data?.status;
+
+    // Auto-Schedule Override
+    if (autoSchedule.enabled) {
+      const now = new Date();
+      const currentStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+      if (currentStr < autoSchedule.openTime || currentStr >= autoSchedule.closeTime) {
+        status = 'closed';
+      }
+    }
+    return status;
   };
 
-  const isAllClosed = Object.keys(categoryStatus).every(cat => getStatusString(cat) === 'closed');
+  const isAllClosed = ['minuman', 'makanan', 'bakaran', 'fashion'].every(cat => getStatusString(cat) === 'closed');
 
   useEffect(() => {
     if (adminClickCount >= 3) {
@@ -480,7 +493,7 @@ const HomePage = ({ onAdminClick }) => {
           </div>
 
           <div className={`premium-search-wrapper desktop-only ${isSearchOpen ? 'expanded' : 'collapsed'}`}>
-            <button className="mobile-search-toggle" onClick={() => setIsSearchOpen(!isSearchOpen)}>
+            <button className="mobile-search-toggle" style={{ display: 'none' }} onClick={() => setIsSearchOpen(!isSearchOpen)}>
               {isSearchOpen ? (
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="m15 18-6-6 6-6" />

@@ -67,6 +67,11 @@ const AdminDashboard = ({ onBack }) => {
         bakaran: { status: 'open', lastUpdated: Date.now() },
         fashion: { status: 'open', lastUpdated: Date.now() }
     });
+    const [autoSchedule, setAutoSchedule] = useState({
+        enabled: false,
+        openTime: '09:00',
+        closeTime: '19:00'
+    });
 
     const formatTimeAgo = (timestamp) => {
         if (!timestamp) return '';
@@ -78,6 +83,7 @@ const AdminDashboard = ({ onBack }) => {
         if (hours < 24) return `${hours}j yang lalu`;
         return new Date(timestamp).toLocaleDateString();
     };
+    useEffect(() => {
         loadData();
         fetchCloudData(); // Pull latest from Vercel Blob to stay synced
         
@@ -150,6 +156,9 @@ const AdminDashboard = ({ onBack }) => {
         if (Object.keys(storedStatus).length > 0) {
             setCategoryStatus(prev => ({ ...prev, ...storedStatus }));
         }
+
+        const storedSchedule = localStorage.getItem('warung_auto_schedule');
+        if (storedSchedule) setAutoSchedule(JSON.parse(storedSchedule));
     };
 
     const resizeImage = (file) => {
@@ -188,20 +197,24 @@ const AdminDashboard = ({ onBack }) => {
         }
     };
 
-    const pushToCloud = async (products, updatedStatus) => {
-        setSyncNotification({ show: true, message: 'Menghubungkan ke Database...', type: 'loading' });
+    const pushToCloud = async (products, catStatus, schedule = autoSchedule) => {
+        setSyncStatus('Menyimpan...');
+        setSyncNotification({ show: true, message: 'Menghubungkan ke Cloud...', type: 'loading' });
+        
         try {
             const response = await fetch('/api/sync', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
+                    action: 'sync_all', 
                     products: products,
-                    categoryStatus: updatedStatus || categoryStatus,
-                    isInitialized: true 
+                    categoryStatus: catStatus,
+                    autoSchedule: schedule,
+                    orders: JSON.parse(localStorage.getItem('warung_orders') || '[]')
                 })
             });
+
             if (response.ok) {
-                // Stage 2: 35-Second Propagation Feedback (User Request)
                 let secondsLeft = 35;
                 setSyncNotification({ 
                     show: true, 
@@ -271,7 +284,7 @@ const AdminDashboard = ({ onBack }) => {
         setImagePreview(null);
         
         window.dispatchEvent(new Event('storage'));
-        pushToCloud(updatedProducts);
+        pushToCloud(updatedProducts, categoryStatus);
     };
 
     const deleteProduct = async (id) => {
@@ -296,7 +309,7 @@ const AdminDashboard = ({ onBack }) => {
         setCustomProducts(updatedProducts);
         window.dispatchEvent(new Event('storage'));
         
-        pushToCloud(updatedProducts);
+        pushToCloud(updatedProducts, categoryStatus);
     };
 
     const updateProductVariant = (id, updatedData) => {
@@ -309,7 +322,7 @@ const AdminDashboard = ({ onBack }) => {
         setEditingVariant(null);
         window.dispatchEvent(new Event('storage'));
         
-        pushToCloud(updatedProducts);
+        pushToCloud(updatedProducts, categoryStatus);
     };
 
     const handleGroupImageUpload = async (groupName, file) => {
@@ -333,7 +346,7 @@ const AdminDashboard = ({ onBack }) => {
             setCustomProducts(updatedProducts);
             localStorage.setItem('warung_custom_products', JSON.stringify(updatedProducts));
             
-            pushToCloud(updatedProducts);
+            pushToCloud(updatedProducts, categoryStatus);
             alert(`Thumbnail ${groupName} berhasil diperbarui!`);
         } catch (err) {
             console.error(err);
@@ -734,6 +747,58 @@ const AdminDashboard = ({ onBack }) => {
                 </div>
 
                 {/* Category Status Toggle */}
+                <div className='admin-section auto-schedule-box'>
+                    <h2>Jadwal Buka/Tutup Otomatis</h2>
+                    <div className='schedule-controls'>
+                        <div className='schedule-toggle-row'>
+                            <span>Aktifkan Jadwal Otomatis</span>
+                            <button 
+                                className={`toggle-btn ${autoSchedule.enabled ? 'open' : 'closed'}`}
+                                onClick={() => {
+                                    const next = { ...autoSchedule, enabled: !autoSchedule.enabled };
+                                    setAutoSchedule(next);
+                                    localStorage.setItem('warung_auto_schedule', JSON.stringify(next));
+                                    pushToCloud(customProducts, categoryStatus, next);
+                                }}
+                            >
+                                {autoSchedule.enabled ? 'AKTIF' : 'NON-AKTIF'}
+                            </button>
+                        </div>
+                        
+                        {autoSchedule.enabled && (
+                            <div className='schedule-times-grid'>
+                                <div className='time-input-group'>
+                                    <label>Jam Buka</label>
+                                    <input 
+                                        type="time" 
+                                        value={autoSchedule.openTime} 
+                                        onChange={(e) => {
+                                            const next = { ...autoSchedule, openTime: e.target.value };
+                                            setAutoSchedule(next);
+                                            localStorage.setItem('warung_auto_schedule', JSON.stringify(next));
+                                            pushToCloud(customProducts, categoryStatus, next);
+                                        }}
+                                    />
+                                </div>
+                                <div className='time-input-group'>
+                                    <label>Jam Tutup</label>
+                                    <input 
+                                        type="time" 
+                                        value={autoSchedule.closeTime} 
+                                        onChange={(e) => {
+                                            const next = { ...autoSchedule, closeTime: e.target.value };
+                                            setAutoSchedule(next);
+                                            localStorage.setItem('warung_auto_schedule', JSON.stringify(next));
+                                            pushToCloud(customProducts, categoryStatus, next);
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                        )}
+                        <p className='schedule-hint'>* Bila aktif, kategori akan otomatis "TUTUP" di luar jam operasional.</p>
+                    </div>
+                </div>
+
                 <div className='admin-section category-status-box'>
                     <h2>Pengaturan Buka/Tutup Toko Per Kategori</h2>
                     <div className='category-toggles-grid'>

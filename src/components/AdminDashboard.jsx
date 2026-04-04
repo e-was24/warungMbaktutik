@@ -73,8 +73,8 @@ const AdminDashboard = ({ onBack }) => {
         loadData();
         fetchCloudData(); // Pull latest from Vercel Blob to stay synced
         
-        // Add polling for new orders (every 30 seconds)
-        const interval = setInterval(fetchCloudData, 30000);
+        // Add polling for new orders (every 10 seconds)
+        const interval = setInterval(fetchCloudData, 10000);
         return () => clearInterval(interval);
     }, []);
 
@@ -193,8 +193,14 @@ const AdminDashboard = ({ onBack }) => {
                 })
             });
             if (response.ok) {
-                setSyncNotification({ show: true, message: 'Sinkronisasi Berhasil!', type: 'success' });
-                setTimeout(() => setSyncNotification(prev => ({ ...prev, show: false })), 3000);
+                // Stage 2: Propagation Feedback
+                setSyncNotification({ show: true, message: 'Berhasil! Menyebarkan ke HP pembeli...', type: 'loading' });
+                
+                // Artificial delay to represent propagation (2 seconds)
+                setTimeout(() => {
+                    setSyncNotification({ show: true, message: 'Sinkronisasi Berhasil!', type: 'success' });
+                    setTimeout(() => setSyncNotification(prev => ({ ...prev, show: false })), 3000);
+                }, 2000);
             }
         } catch (err) {
             console.error("Auto-sync failed", err);

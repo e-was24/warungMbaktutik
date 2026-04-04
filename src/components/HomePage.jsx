@@ -172,8 +172,8 @@ const HomePage = ({ onAdminClick }) => {
 
     fetchCloudData();
 
-    // Check for updates every 30 seconds
-    const interval = setInterval(fetchCloudData, 30000);
+    // Check for updates every 10 seconds
+    const interval = setInterval(fetchCloudData, 10000);
 
     window.addEventListener("storage", loadCustomProducts);
     return () => {

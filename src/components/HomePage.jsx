@@ -527,7 +527,10 @@ const HomePage = ({ onAdminClick }) => {
           </button>
         </nav>
         <div className="sidebar-footer">
-          <p>© 2024 Warung Mbk Tutik</p>
+          <div className="footer-legal-sidebar">
+            <p>&copy; {new Date().getFullYear()} Warung Mbk Tutik.</p>
+            <p>All rights reserved.</p>
+          </div>
         </div>
       </aside>
 
@@ -716,7 +719,7 @@ const HomePage = ({ onAdminClick }) => {
           </span>
         </div>
         <div className="footer-legal">
-          &copy; {new Date().getFullYear()} Lanova Tech. all rights reserved.
+          &copy; {new Date().getFullYear()} Warung Mbk Tutik. All rights reserved.
         </div>
       </footer>
 

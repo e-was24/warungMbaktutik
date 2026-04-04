@@ -193,8 +193,8 @@ const AdminDashboard = ({ onBack }) => {
                 })
             });
             if (response.ok) {
-                // Stage 2: 1-Minute Propagation Feedback (User Request)
-                let secondsLeft = 60;
+                // Stage 2: 35-Second Propagation Feedback (User Request)
+                let secondsLeft = 35;
                 setSyncNotification({ 
                     show: true, 
                     message: `Berhasil! Menunggu penyebaran data (${secondsLeft}s)...`, 

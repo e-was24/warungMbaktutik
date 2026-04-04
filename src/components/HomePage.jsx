@@ -341,9 +341,9 @@ const HomePage = ({ onAdminClick }) => {
         <div className="nav-content">
           <button className={`mobile-menu-toggle ${isMenuOpen ? 'active' : ''}`} onClick={() => setIsMenuOpen(!isMenuOpen)}>
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="menu-toggle-svg">
-              <circle cx="8" cy="12" r="7" className="icon-plate" />
-              <path d="M19 5v14" className="icon-spoon" />
-              <path d="M22 8v8" className="icon-fork" />
+              <circle cx="8" cy="12" r="6" className="icon-plate" />
+              <path d="M15 11v8M15 11c1.1 0 2-1 2-2.5S16.1 6 15 6s-2 1-2 2.5 0.9 2.5 2 2.5z" className="icon-spoon" />
+              <path d="M20 11v8M18 6v3a2 2 0 0 0 4 0V6M20 6v3" className="icon-fork" />
             </svg>
           </button>
 
@@ -448,9 +448,11 @@ const HomePage = ({ onAdminClick }) => {
           <div className="sidebar-brand">
             <span className="brand-accent">W</span>arung <span>M</span>bk Tutik
           </div>
-          <button className="sidebar-close-btn" onClick={() => setIsMenuOpen(false)}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+          <button className={`mobile-menu-toggle sidebar-toggle-btn ${isMenuOpen ? 'active' : ''}`} onClick={() => setIsMenuOpen(false)}>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="menu-toggle-svg">
+              <circle cx="8" cy="12" r="6" className="icon-plate" />
+              <path d="M15 11v8M15 11c1.1 0 2-1 2-2.5S16.1 6 15 6s-2 1-2 2.5 0.9 2.5 2 2.5z" className="icon-spoon" />
+              <path d="M20 11v8M18 6v3a2 2 0 0 0 4 0V6M20 6v3" className="icon-fork" />
             </svg>
           </button>
         </div>

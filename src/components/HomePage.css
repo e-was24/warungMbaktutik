@@ -358,12 +358,12 @@ body {
 
     /* Standard way to make X using transforms on straight lines */
     .mobile-menu-toggle.active .icon-spoon {
-        transform: translateX(-7px) translateY(0) rotate(45deg);
+        transform: translateX(-3px) translateY(0) rotate(45deg);
         transform-origin: 12px 12px;
     }
 
     .mobile-menu-toggle.active .icon-fork {
-        transform: translateX(-10px) translateY(0) rotate(-45deg);
+        transform: translateX(-8px) translateY(0) rotate(-45deg);
         transform-origin: 12px 12px;
     }
 
@@ -1302,21 +1302,22 @@ body {
     margin-bottom: 40px;
 }
 
-.sidebar-close-btn {
+.sidebar-toggle-btn {
+    display: flex !important;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: white;
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     border-radius: 12px;
-    display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s ease;
+    padding: 8px;
 }
 
-.sidebar-close-btn:hover {
+.sidebar-toggle-btn:hover {
     background: rgba(255, 68, 68, 0.1);
     color: #ff4444;
     border-color: rgba(255, 68, 68, 0.2);

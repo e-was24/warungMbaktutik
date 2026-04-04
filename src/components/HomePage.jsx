@@ -397,10 +397,19 @@ const HomePage = ({ onAdminClick }) => {
 
         <main className="warung-tutup-container">
           <div className="tutup-glass-card">
-            <div className="tutup-icon">🚪</div>
+            <div className="tutup-icon">
+              <svg width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="tutup-svg-main">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                <path d="M12 12v6" />
+                <path d="M12 12c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z" />
+                <path d="M9 22V12h6v10" />
+                <rect x="7" y="11" width="10" height="4" rx="1" stroke="var(--p-accent)" fill="var(--p-accent)" fillOpacity="0.1" />
+                <text x="12" y="13.5" textAnchor="middle" fontSize="2.5" fill="var(--p-accent)" fontWeight="bold" style={{ textTransform: 'uppercase' }}>Closed</text>
+              </svg>
+            </div>
             <h1 className="tutup-title">Waduh, Warung Tutup Nih!</h1>
             <p className="tutup-message">
-              Klik balik lagi besok yaa, atau pantau terus sosial media kami untuk info buka kembali!
+              Silakan mampir lagi besok yaa, atau pantau terus sosial media kami untuk info buka kembali!
             </p>
             <div className="tutup-tagline">Rasa Autentik, Harga Ekonomis.</div>
             <div className="tutup-social">

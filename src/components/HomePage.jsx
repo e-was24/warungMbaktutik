@@ -213,6 +213,33 @@ const HomePage = ({ onAdminClick }) => {
     return () => clearInterval(timer);
   }, []);
 
+  const getStatusString = (cat) => {
+    const data = categoryStatus[cat];
+    return typeof data === 'string' ? data : data?.status;
+  };
+
+  const isAllClosed = Object.keys(categoryStatus).every(cat => getStatusString(cat) === 'closed');
+
+  useEffect(() => {
+    if (adminClickCount >= 3) {
+      const password = window.prompt("Masukkan Password Admin:");
+      const adminPass = import.meta.env.VITE_ADMIN_PASSWORD || "admin123";
+
+      if (password === adminPass) {
+        onAdminClick();
+      } else if (password !== null) {
+        alert("Password Salah!");
+      }
+      setAdminClickCount(0);
+      return;
+    }
+
+    if (adminClickCount > 0) {
+        const timer = setTimeout(() => setAdminClickCount(0), 2000);
+        return () => clearTimeout(timer);
+    }
+  }, [adminClickCount, onAdminClick]);
+
   const activeMenuData =
     activeTab === "minuman" ? menuData.minuman : (activeTab === "makanan" ? menuData.makanan : (activeTab === "bakaran" ? menuData.bakaran : menuData.fashion));
 
@@ -337,24 +364,46 @@ const HomePage = ({ onAdminClick }) => {
   };
 
   const handleHeroClick = () => {
-    const nextCount = adminClickCount + 1;
-    setAdminClickCount(nextCount);
-
-    if (nextCount === 3) {
-      const password = window.prompt("Masukkan Password Admin:");
-      const adminPass = import.meta.env.VITE_ADMIN_PASSWORD || "admin123";
-
-      if (password === adminPass) {
-        onAdminClick();
-      } else if (password !== null) {
-        alert("Password Salah!");
-      }
-      setAdminClickCount(0);
-    }
-
-    // Reset count after 2 seconds of inactivity
-    setTimeout(() => setAdminClickCount(0), 2000);
+    // Only used for aesthetic now, as nav-brand handles the logic
+    setAdminClickCount(prev => prev + 1);
   };
+
+  if (isAllClosed) {
+    return (
+      <div className="home-page-premium">
+        <div className="decorative-blob blob-1"></div>
+        <div className="decorative-blob blob-2"></div>
+        
+        <header className="premium-nav">
+          <div className="nav-content">
+            <div className="nav-brand" onClick={() => setAdminClickCount(c => c + 1)}>
+              <span className="brand-accent">W</span>arung <span>M</span>bk Tutik
+            </div>
+          </div>
+        </header>
+
+        <main className="warung-tutup-container">
+          <div className="tutup-glass-card">
+            <div className="tutup-icon">🚪</div>
+            <h1 className="tutup-title">Waduh, Warung Tutup Nih!</h1>
+            <p className="tutup-message">
+              Klik balik lagi besok yaa, atau pantau terus sosial media kami untuk info buka kembali!
+            </p>
+            <div className="tutup-tagline">Rasa Autentik, Harga Ekonomis.</div>
+            <div className="tutup-social">
+              <span>Follow us for updates: @warungmbktutik</span>
+            </div>
+          </div>
+        </main>
+
+        <footer className="unified-footer">
+          <div className="footer-content">
+            <p>© 2024 Warung Mbk Tutik. All rights reserved.</p>
+          </div>
+        </footer>
+      </div>
+    );
+  }
 
   return (
     <div className={`home-page-premium ${activeTab}-active`}>

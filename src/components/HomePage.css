@@ -357,11 +357,13 @@ body {
     }
 
     .mobile-menu-toggle.active .hb-line-1 {
-        transform: translateY(0) rotate(45deg) scaleX(1.1);
+        transform: translateY(0) rotate(45deg);
+        transform-origin: 12px 12px;
     }
 
     .mobile-menu-toggle.active .hb-line-3 {
-        transform: translateY(0) rotate(-45deg) scaleX(1.1);
+        transform: translateY(0) rotate(-45deg);
+        transform-origin: 12px 12px;
     }
 
     .nav-brand {

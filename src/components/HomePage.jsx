@@ -341,9 +341,9 @@ const HomePage = ({ onAdminClick }) => {
         <div className="nav-content">
           <button className={`mobile-menu-toggle ${isMenuOpen ? 'active' : ''}`} onClick={() => setIsMenuOpen(!isMenuOpen)}>
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="menu-toggle-svg">
-              <line x1="4" y1="12" x2="20" y2="12" className="hb-line-1" />
-              <line x1="4" y1="12" x2="20" y2="12" className="hb-line-2" />
-              <line x1="4" y1="12" x2="20" y2="12" className="hb-line-3" />
+              <line x1="2" y1="12" x2="22" y2="12" className="hb-line-1" />
+              <line x1="2" y1="12" x2="22" y2="12" className="hb-line-2" />
+              <line x1="2" y1="12" x2="22" y2="12" className="hb-line-3" />
             </svg>
           </button>
 
@@ -450,9 +450,9 @@ const HomePage = ({ onAdminClick }) => {
           </div>
           <button className={`mobile-menu-toggle sidebar-toggle-btn ${isMenuOpen ? 'active' : ''}`} onClick={() => setIsMenuOpen(false)}>
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="menu-toggle-svg">
-              <line x1="4" y1="12" x2="20" y2="12" className="hb-line-1" />
-              <line x1="4" y1="12" x2="20" y2="12" className="hb-line-2" />
-              <line x1="4" y1="12" x2="20" y2="12" className="hb-line-3" />
+              <line x1="2" y1="12" x2="22" y2="12" className="hb-line-1" />
+              <line x1="2" y1="12" x2="22" y2="12" className="hb-line-2" />
+              <line x1="2" y1="12" x2="22" y2="12" className="hb-line-3" />
             </svg>
           </button>
         </div>

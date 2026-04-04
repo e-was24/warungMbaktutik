@@ -125,8 +125,9 @@ const HomePage = ({ onAdminClick }) => {
     const fetchCloudData = async () => {
       try {
         const res = await fetch(`/api/sync?t=${Date.now()}`);
-        if (!res.ok) return;
+        if (!res.ok) throw new Error("Sync failure");
         const cloudData = await res.json();
+        window.syncErrorCount = 0; // Reset on success
 
         // Support legacy array and new object format
         const cloudProducts = Array.isArray(cloudData)
@@ -179,13 +180,21 @@ const HomePage = ({ onAdminClick }) => {
         }
       } catch (err) {
         console.warn("Cloud Sync Offline:", err);
+        window.syncErrorCount = (window.syncErrorCount || 0) + 1;
       }
     };
 
     fetchCloudData();
 
-    // Check for updates every 10 seconds
-    const interval = setInterval(fetchCloudData, 10000);
+    // Check for updates every 30 seconds
+    const interval = setInterval(() => {
+      // Lazy sync: stop polling if too many consecutive errors
+      if (window.syncErrorCount > 10) {
+        console.warn("Too many sync errors, slowing down...");
+        return;
+      }
+      fetchCloudData();
+    }, 30000); // Reduce to 30s for Vercel Blob limits
 
     window.addEventListener("storage", loadCustomProducts);
     return () => {

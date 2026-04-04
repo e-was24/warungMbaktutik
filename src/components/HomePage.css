@@ -247,6 +247,10 @@ body {
     color: white;
 }
 
+.mobile-search-toggle {
+    display: none;
+}
+
 /* Empty State */
 .search-empty-state {
     grid-column: 1 / -1;

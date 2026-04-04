@@ -19,7 +19,6 @@ const HomePage = ({ onAdminClick }) => {
   const [adminClickCount, setAdminClickCount] = useState(0);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [searchTerm, setSearchTerm] = useState("");
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [categoryStatus, setCategoryStatus] = useState({
     minuman: 'open',
     makanan: 'open',
@@ -411,7 +410,7 @@ const HomePage = ({ onAdminClick }) => {
             </button>
           </div>
 
-          <div className={`premium-search-wrapper ${isSearchOpen ? 'expanded' : 'collapsed'}`}>
+          <div className={`premium-search-wrapper desktop-only ${isSearchOpen ? 'expanded' : 'collapsed'}`}>
             <button className="mobile-search-toggle" onClick={() => setIsSearchOpen(!isSearchOpen)}>
               {isSearchOpen ? (
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -454,6 +453,26 @@ const HomePage = ({ onAdminClick }) => {
             <span className="brand-accent">W</span>arung <span>M</span>bk Tutik
           </div>
         </div>
+
+        <div className="sidebar-search-box">
+          <div className="sidebar-search-input-wrapper">
+             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="sidebar-search-icon">
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.3-4.3" />
+             </svg>
+             <input 
+               type="text" 
+               className="sidebar-search-input"
+               placeholder="Cari Menu..."
+               value={searchTerm}
+               onChange={(e) => setSearchTerm(e.target.value)}
+             />
+             {searchTerm && (
+               <button className="sidebar-clear-search" onClick={() => setSearchTerm("")}>&times;</button>
+             )}
+          </div>
+        </div>
+
         <nav className="sidebar-nav">
           <button 
             className={`sidebar-link ${activeTab === 'minuman' ? 'active' : ''} ${categoryStatus.minuman === 'closed' ? 'is-closed' : ''}`}

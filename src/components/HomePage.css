@@ -305,11 +305,15 @@ body {
     
     .nav-content {
         display: grid;
-        grid-template-columns: auto 1fr auto;
-        grid-template-areas: "menu brand search";
+        grid-template-columns: auto 1fr;
+        grid-template-areas: "menu brand";
         gap: 15px;
         padding: 0;
         align-items: center;
+    }
+    
+    .desktop-only {
+        display: none !important;
     }
     
     .mobile-menu-toggle {
@@ -1317,6 +1321,61 @@ body {
 
 .mobile-menu-toggle {
     display: none; /* Only visible on mobile via media query */
+}
+
+/* Sidebar Search Box Styling */
+.sidebar-search-box {
+    padding: 0 5px;
+    margin-bottom: 30px;
+}
+
+.sidebar-search-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 0 15px;
+    height: 48px;
+    transition: all 0.3s ease;
+}
+
+.sidebar-search-input-wrapper:focus-within {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--p-accent);
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+}
+
+.sidebar-search-icon {
+    color: var(--p-text-muted);
+    margin-right: 12px;
+    opacity: 0.7;
+}
+
+.sidebar-search-input {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 15px;
+    width: 100%;
+    outline: none;
+}
+
+.sidebar-search-input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.sidebar-clear-search {
+    background: transparent;
+    border: none;
+    color: var(--p-text-muted);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .search-input-container {

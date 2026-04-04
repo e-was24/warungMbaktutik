@@ -963,3 +963,43 @@
         margin: 0;
     }
 }
+
+/* --- Status Save Footer --- */
+.status-save-footer {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px dashed rgba(255, 255, 255, 0.1);
+    text-align: center;
+}
+
+.status-save-footer p {
+    font-size: 11px !important;
+    opacity: 0.6;
+    margin-bottom: 12px;
+}
+
+.save-status-btn-manual {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.save-status-btn-manual:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+    filter: brightness(1.1);
+}
+
+.save-status-btn-manual:active {
+    transform: translateY(0);
+}

@@ -653,6 +653,7 @@ const AdminDashboard = ({ onBack }) => {
                                         const newStatus = { ...categoryStatus, [cat]: status === 'open' ? 'closed' : 'open' };
                                         setCategoryStatus(newStatus);
                                         localStorage.setItem('warung_category_status', JSON.stringify(newStatus));
+                                        // Keep auto-sync but add manual button for certainty
                                         pushToCloud(customProducts, newStatus);
                                     }}
                                 >
@@ -661,7 +662,15 @@ const AdminDashboard = ({ onBack }) => {
                             </div>
                         ))}
                     </div>
-                    <p style={{fontSize: '11px', marginTop: '10px', opacity: 0.7}}>* Klik tombol Simpan di atas untuk menerapkan perubahan ini ke pembeli.</p>
+                    <div className='status-save-footer'>
+                        <p>* Status akan otomatis tersimpan, namun anda bisa klik tombol di bawah untuk memastikan.</p>
+                        <button 
+                            className="save-status-btn-manual" 
+                            onClick={() => pushToCloud(customProducts, categoryStatus)}
+                        >
+                            SINKRONISASI STATUS KE GOOGLE/DATABASE ☁️
+                        </button>
+                    </div>
                 </div>
 
                 <div className='orders-section'>

@@ -20,22 +20,22 @@ export default async function handler(req, res) {
     } 
 
     if (req.method === 'POST') {
-      let products = req.body;
+      let body = req.body;
       
-      // Manual parsing if req.body is a string
-      if (typeof products === 'string') {
-        try { products = JSON.parse(products).products; } catch(e) { products = null; }
-      } else if (products && products.products) {
-        products = products.products;
+      // Manual parsing if body is a string
+      if (typeof body === 'string') {
+        try { body = JSON.parse(body); } catch(e) { body = null; }
       }
 
-      if (!Array.isArray(products)) {
-        return res.status(400).json({ error: 'Data tidak valid (Bukan Array)', received: typeof req.body });
+      if (!body || (!Array.isArray(body) && !body.products)) {
+        return res.status(400).json({ error: 'Data tidak valid', received: typeof req.body });
       }
       
-      console.log(`Uploading ${products.length} products to Blob`);
+      const payload = body.products ? body : { products: body, categoryStatus: {}, isInitialized: true };
       
-      const result = await put('warung-menu.json', JSON.stringify(products), {
+      console.log(`Uploading data object to Blob`);
+      
+      const result = await put('warung-menu.json', JSON.stringify(payload), {
         access: 'public',
         addRandomSuffix: false,
         allowOverwrite: true,

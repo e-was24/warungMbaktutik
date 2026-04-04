@@ -86,6 +86,10 @@ body {
     --p-glow: rgba(236, 72, 153, 0.2);
 }
 
+.mobile-menu-toggle {
+    display: none;
+}
+
 /* Decorative Blobs */
 .decorative-blob {
     position: fixed;
@@ -1342,9 +1346,6 @@ body {
     text-align: center;
 }
 
-.mobile-menu-toggle {
-    display: none; /* Only visible on mobile via media query */
-}
 
 /* Sidebar Search Box Styling */
 .sidebar-search-box {

@@ -1645,6 +1645,13 @@ body {
     }
 }
 
+.sidebar-divider {
+    height: 1px;
+    background: var(--p-border);
+    margin: 16px 20px;
+    opacity: 0.5;
+}
+
 .footer-legal-sidebar {
     font-size: 11px;
     color: rgba(255, 255, 255, 0.4);

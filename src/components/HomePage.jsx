@@ -398,13 +398,47 @@ const HomePage = ({ onAdminClick }) => {
         <main className="warung-tutup-container">
           <div className="tutup-glass-card">
             <div className="tutup-icon">
-              <svg width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="tutup-svg-main">
-                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                <path d="M12 12v6" />
-                <path d="M12 12c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z" />
-                <path d="M9 22V12h6v10" />
-                <rect x="7" y="11" width="10" height="4" rx="1" stroke="var(--p-accent)" fill="var(--p-accent)" fillOpacity="0.1" />
-                <text x="12" y="13.5" textAnchor="middle" fontSize="2.5" fill="var(--p-accent)" fontWeight="bold" style={{ textTransform: 'uppercase' }}>Closed</text>
+              <svg width="150" height="150" viewBox="0 0 100 100" className="tutup-svg-main">
+                {/* Table */}
+                <rect x="25" y="75" width="50" height="4" rx="2" fill="currentColor" opacity="0.2" />
+                
+                {/* Person Group */}
+                <g className="sleepy-person">
+                  {/* Body */}
+                  <path d="M35 75 Q 30 60 38 45 L 55 45 Q 63 60 58 75 Z" fill="currentColor" opacity="0.7" />
+                  
+                  {/* Head with Nodding Animation */}
+                  <g>
+                    <circle cx="48" cy="35" r="10" fill="currentColor" />
+                    {/* Face details - closed eyes */}
+                    <path d="M44 36 Q 46 38 48 36" stroke="rgba(0,0,0,0.3)" strokeWidth="1" fill="none" />
+                    <path d="M50 36 Q 52 38 54 36" stroke="rgba(0,0,0,0.3)" strokeWidth="1" fill="none" />
+                    
+                    <animateTransform 
+                      attributeName="transform" 
+                      type="rotate" 
+                      values="0 48 45; 15 48 45; 0 48 45" 
+                      dur="4s" 
+                      repeatCount="indefinite" 
+                    />
+                  </g>
+                  
+                  {/* Arms on Table */}
+                  <path d="M40 55 Q 50 55 55 75" stroke="currentColor" strokeWidth="4" strokeLinecap="round" opacity="0.8" />
+                  <path d="M53 55 Q 45 55 40 75" stroke="currentColor" strokeWidth="4" strokeLinecap="round" opacity="0.8" />
+                </g>
+
+                {/* Zzz Animations */}
+                <g opacity="0">
+                  <text x="62" y="30" fontSize="10" fontWeight="bold" fill="var(--p-accent)" style={{ fontFamily: 'Arial' }}>Z</text>
+                  <animate attributeName="opacity" values="0;1;0" dur="5s" repeatCount="indefinite" begin="0s" />
+                  <animateTransform attributeName="transform" type="translate" values="0 0; 10 -20" dur="5s" repeatCount="indefinite" begin="0s" />
+                </g>
+                <g opacity="0">
+                  <text x="70" y="20" fontSize="14" fontWeight="bold" fill="var(--p-accent)" style={{ fontFamily: 'Arial' }}>Z</text>
+                  <animate attributeName="opacity" values="0;1;0" dur="5s" repeatCount="indefinite" begin="1.5s" />
+                  <animateTransform attributeName="transform" type="translate" values="0 0; 15 -30" dur="5s" repeatCount="indefinite" begin="1.5s" />
+                </g>
               </svg>
             </div>
             <h1 className="tutup-title">Waduh, Warung Tutup Nih!</h1>

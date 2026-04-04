@@ -193,14 +193,28 @@ const AdminDashboard = ({ onBack }) => {
                 })
             });
             if (response.ok) {
-                // Stage 2: Propagation Feedback
-                setSyncNotification({ show: true, message: 'Berhasil! Menyebarkan ke HP pembeli...', type: 'loading' });
+                // Stage 2: 1-Minute Propagation Feedback (User Request)
+                let secondsLeft = 60;
+                setSyncNotification({ 
+                    show: true, 
+                    message: `Berhasil! Menunggu penyebaran data (${secondsLeft}s)...`, 
+                    type: 'loading' 
+                });
                 
-                // Artificial delay to represent propagation (2 seconds)
-                setTimeout(() => {
-                    setSyncNotification({ show: true, message: 'Sinkronisasi Berhasil!', type: 'success' });
-                    setTimeout(() => setSyncNotification(prev => ({ ...prev, show: false })), 3000);
-                }, 2000);
+                const countdown = setInterval(() => {
+                    secondsLeft -= 1;
+                    if (secondsLeft <= 0) {
+                        clearInterval(countdown);
+                        setSyncNotification({ show: true, message: 'Semua HP Pembeli Terupdate! ✓', type: 'success' });
+                        setTimeout(() => setSyncNotification(prev => ({ ...prev, show: false })), 4000);
+                    } else {
+                        setSyncNotification({ 
+                            show: true, 
+                            message: `Berhasil! Menunggu penyebaran data (${secondsLeft}s)...`, 
+                            type: 'loading' 
+                        });
+                    }
+                }, 1000);
             }
         } catch (err) {
             console.error("Auto-sync failed", err);

@@ -62,14 +62,22 @@ const AdminDashboard = ({ onBack }) => {
     const [editingVariant, setEditingVariant] = useState(null); // { id, price, variant }
     const [syncStatus, setSyncStatus] = useState('');
     const [categoryStatus, setCategoryStatus] = useState({
-        minuman: 'open',
-        makanan: 'open',
-        bakaran: 'open',
-        fashion: 'open'
+        minuman: { status: 'open', lastUpdated: Date.now() },
+        makanan: { status: 'open', lastUpdated: Date.now() },
+        bakaran: { status: 'open', lastUpdated: Date.now() },
+        fashion: { status: 'open', lastUpdated: Date.now() }
     });
-    const [syncNotification, setSyncNotification] = useState({ show: false, message: '', type: 'loading' });
 
-    useEffect(() => {
+    const formatTimeAgo = (timestamp) => {
+        if (!timestamp) return '';
+        const seconds = Math.floor((Date.now() - timestamp) / 1000);
+        if (seconds < 60) return 'Tadi';
+        const minutes = Math.floor(seconds / 60);
+        if (minutes < 60) return `${minutes}m yang lalu`;
+        const hours = Math.floor(minutes / 60);
+        if (hours < 24) return `${hours}j yang lalu`;
+        return new Date(timestamp).toLocaleDateString();
+    };
         loadData();
         fetchCloudData(); // Pull latest from Vercel Blob to stay synced
         
@@ -729,28 +737,42 @@ const AdminDashboard = ({ onBack }) => {
                 <div className='admin-section category-status-box'>
                     <h2>Pengaturan Buka/Tutup Toko Per Kategori</h2>
                     <div className='category-toggles-grid'>
-                        {Object.entries(categoryStatus).map(([cat, status]) => (
-                            <div key={cat} className={`cat-toggle-card ${status}`}>
-                                <div className='cat-toggle-info'>
-                                    <span className='cat-toggle-name'>{cat.toUpperCase()}</span>
-                                    <span className={`cat-toggle-status ${status}`}>
-                                        {status === 'open' ? 'BUKA' : 'TUTUP'}
-                                    </span>
+                        {Object.entries(categoryStatus).map(([cat, data]) => {
+                            const status = typeof data === 'string' ? data : data.status;
+                            const lastUpdated = typeof data === 'object' ? data.lastUpdated : null;
+                            
+                            return (
+                                <div key={cat} className={`cat-toggle-card ${status}`}>
+                                    <div className='cat-toggle-info'>
+                                        <div className="cat-title-row">
+                                            <span className='cat-toggle-name'>{cat.toUpperCase()}</span>
+                                            {lastUpdated && <span className="cat-last-updated">{formatTimeAgo(lastUpdated)}</span>}
+                                        </div>
+                                        <span className={`cat-toggle-status ${status}`}>
+                                            {status === 'open' ? 'BUKA' : 'TUTUP'}
+                                        </span>
+                                    </div>
+                                    <button 
+                                        className={`toggle-btn ${status}`}
+                                        onClick={() => {
+                                            const newStatus = { 
+                                                ...categoryStatus, 
+                                                [cat]: { 
+                                                    status: status === 'open' ? 'closed' : 'open',
+                                                    lastUpdated: Date.now()
+                                                } 
+                                            };
+                                            setCategoryStatus(newStatus);
+                                            localStorage.setItem('warung_category_status', JSON.stringify(newStatus));
+                                            // Keep auto-sync but add manual button for certainty
+                                            pushToCloud(customProducts, newStatus);
+                                        }}
+                                    >
+                                        {status === 'open' ? 'Tutup Kategori' : 'Buka Kategori'}
+                                    </button>
                                 </div>
-                                <button 
-                                    className={`toggle-btn ${status}`}
-                                    onClick={() => {
-                                        const newStatus = { ...categoryStatus, [cat]: status === 'open' ? 'closed' : 'open' };
-                                        setCategoryStatus(newStatus);
-                                        localStorage.setItem('warung_category_status', JSON.stringify(newStatus));
-                                        // Keep auto-sync but add manual button for certainty
-                                        pushToCloud(customProducts, newStatus);
-                                    }}
-                                >
-                                    {status === 'open' ? 'Tutup Kategori' : 'Buka Kategori'}
-                                </button>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                     <div className='status-save-footer'>
                         <p>* Status akan otomatis tersimpan, namun anda bisa klik tombol di bawah untuk memastikan.</p>

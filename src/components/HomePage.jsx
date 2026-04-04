@@ -20,10 +20,10 @@ const HomePage = ({ onAdminClick }) => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryStatus, setCategoryStatus] = useState({
-    minuman: 'open',
-    makanan: 'open',
-    bakaran: 'open',
-    fashion: 'open'
+    minuman: { status: 'open', lastUpdated: Date.now() },
+    makanan: { status: 'open', lastUpdated: Date.now() },
+    bakaran: { status: 'open', lastUpdated: Date.now() },
+    fashion: { status: 'open', lastUpdated: Date.now() }
   });
 
   const [menuData, setMenuData] = useState({
@@ -184,8 +184,16 @@ const HomePage = ({ onAdminClick }) => {
 
   // Auto-switch away from CLOSED categories
   useEffect(() => {
-    if (categoryStatus[activeTab] === 'closed') {
-      const firstOpen = Object.entries(categoryStatus).find(([cat, status]) => status === 'open');
+    const isClosed = (cat) => {
+        const data = categoryStatus[cat];
+        return typeof data === 'string' ? data === 'closed' : data?.status === 'closed';
+    };
+
+    if (isClosed(activeTab)) {
+      const firstOpen = Object.entries(categoryStatus).find(([cat, data]) => {
+        const status = typeof data === 'string' ? data : data.status;
+        return status === 'open';
+      });
       if (firstOpen) {
         setActiveTab(firstOpen[0]);
       }
@@ -369,11 +377,11 @@ const HomePage = ({ onAdminClick }) => {
 
           <div className="category-switcher">
             <button
-              className={`switch-btn ${activeTab === "minuman" ? "active" : ""} ${categoryStatus.minuman === 'closed' ? 'is-closed' : ''}`}
-              onClick={() => categoryStatus.minuman === 'open' && setActiveTab("minuman")}
-              disabled={categoryStatus.minuman === 'closed'}
+              className={`switch-btn ${activeTab === "minuman" ? "active" : ""} ${(categoryStatus.minuman?.status || categoryStatus.minuman) === 'closed' ? 'is-closed' : ''}`}
+              onClick={() => (categoryStatus.minuman?.status || categoryStatus.minuman) === 'open' && setActiveTab("minuman")}
+              disabled={(categoryStatus.minuman?.status || categoryStatus.minuman) === 'closed'}
             >
-              🍹 Minuman {categoryStatus.minuman === 'closed' && (
+              🍹 Minuman {(categoryStatus.minuman?.status || categoryStatus.minuman) === 'closed' && (
                 <span className="closed-icon-badge">
                   <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                     <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
@@ -382,11 +390,11 @@ const HomePage = ({ onAdminClick }) => {
               )}
             </button>
             <button
-              className={`switch-btn ${activeTab === "makanan" ? "active" : ""} ${categoryStatus.makanan === 'closed' ? 'is-closed' : ''}`}
-              onClick={() => categoryStatus.makanan === 'open' && setActiveTab("makanan")}
-              disabled={categoryStatus.makanan === 'closed'}
+              className={`switch-btn ${activeTab === "makanan" ? "active" : ""} ${(categoryStatus.makanan?.status || categoryStatus.makanan) === 'closed' ? 'is-closed' : ''}`}
+              onClick={() => (categoryStatus.makanan?.status || categoryStatus.makanan) === 'open' && setActiveTab("makanan")}
+              disabled={(categoryStatus.makanan?.status || categoryStatus.makanan) === 'closed'}
             >
-              🍜 Seblak {categoryStatus.makanan === 'closed' && (
+              🍜 Seblak {(categoryStatus.makanan?.status || categoryStatus.makanan) === 'closed' && (
                 <span className="closed-icon-badge">
                   <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                     <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
@@ -395,11 +403,11 @@ const HomePage = ({ onAdminClick }) => {
               )}
             </button>
             <button
-              className={`switch-btn ${activeTab === "bakaran" ? "active" : ""} ${categoryStatus.bakaran === 'closed' ? 'is-closed' : ''}`}
-              onClick={() => categoryStatus.bakaran === 'open' && setActiveTab("bakaran")}
-              disabled={categoryStatus.bakaran === 'closed'}
+              className={`switch-btn ${activeTab === "bakaran" ? "active" : ""} ${(categoryStatus.bakaran?.status || categoryStatus.bakaran) === 'closed' ? 'is-closed' : ''}`}
+              onClick={() => (categoryStatus.bakaran?.status || categoryStatus.bakaran) === 'open' && setActiveTab("bakaran")}
+              disabled={(categoryStatus.bakaran?.status || categoryStatus.bakaran) === 'closed'}
             >
-              🔥 Bakaran {categoryStatus.bakaran === 'closed' && (
+              🔥 Bakaran {(categoryStatus.bakaran?.status || categoryStatus.bakaran) === 'closed' && (
                 <span className="closed-icon-badge">
                   <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                     <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
@@ -408,11 +416,11 @@ const HomePage = ({ onAdminClick }) => {
               )}
             </button>
             <button
-              className={`switch-btn ${activeTab === "fashion" ? "active" : ""} ${categoryStatus.fashion === 'closed' ? 'is-closed' : ''}`}
-              onClick={() => categoryStatus.fashion === 'open' && setActiveTab("fashion")}
-              disabled={categoryStatus.fashion === 'closed'}
+              className={`switch-btn ${activeTab === "fashion" ? "active" : ""} ${(categoryStatus.fashion?.status || categoryStatus.fashion) === 'closed' ? 'is-closed' : ''}`}
+              onClick={() => (categoryStatus.fashion?.status || categoryStatus.fashion) === 'open' && setActiveTab("fashion")}
+              disabled={(categoryStatus.fashion?.status || categoryStatus.fashion) === 'closed'}
             >
-              👗 Fashion {categoryStatus.fashion === 'closed' && (
+              👗 Fashion {(categoryStatus.fashion?.status || categoryStatus.fashion) === 'closed' && (
                 <span className="closed-icon-badge">
                   <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                     <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
@@ -494,36 +502,36 @@ const HomePage = ({ onAdminClick }) => {
 
         <nav className="sidebar-nav">
           <button 
-            className={`sidebar-link ${activeTab === 'minuman' ? 'active' : ''} ${categoryStatus.minuman === 'closed' ? 'is-closed' : ''}`}
-            onClick={() => { if(categoryStatus.minuman === 'open') { setActiveTab('minuman'); setIsMenuOpen(false); } }}
+            className={`sidebar-link ${activeTab === 'minuman' ? 'active' : ''} ${(categoryStatus.minuman?.status || categoryStatus.minuman) === 'closed' ? 'is-closed' : ''}`}
+            onClick={() => { if((categoryStatus.minuman?.status || categoryStatus.minuman) === 'open') { setActiveTab('minuman'); setIsMenuOpen(false); } }}
           >
             <span className="link-icon">🍹</span>
             <span className="link-text">Minuman</span>
-            {categoryStatus.minuman === 'closed' && <span className="closed-icon-badge small"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>}
+            {(categoryStatus.minuman?.status || categoryStatus.minuman) === 'closed' && <span className="closed-icon-badge small"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>}
           </button>
           <button 
-            className={`sidebar-link ${activeTab === 'makanan' ? 'active' : ''} ${categoryStatus.makanan === 'closed' ? 'is-closed' : ''}`}
-            onClick={() => { if(categoryStatus.makanan === 'open') { setActiveTab('makanan'); setIsMenuOpen(false); } }}
+            className={`sidebar-link ${activeTab === 'makanan' ? 'active' : ''} ${(categoryStatus.makanan?.status || categoryStatus.makanan) === 'closed' ? 'is-closed' : ''}`}
+            onClick={() => { if((categoryStatus.makanan?.status || categoryStatus.makanan) === 'open') { setActiveTab('makanan'); setIsMenuOpen(false); } }}
           >
             <span className="link-icon">🍜</span>
             <span className="link-text">Seblak Prasmanan</span>
-            {categoryStatus.makanan === 'closed' && <span className="closed-icon-badge small"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>}
+            {(categoryStatus.makanan?.status || categoryStatus.makanan) === 'closed' && <span className="closed-icon-badge small"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>}
           </button>
           <button 
-            className={`sidebar-link ${activeTab === 'bakaran' ? 'active' : ''} ${categoryStatus.bakaran === 'closed' ? 'is-closed' : ''}`}
-            onClick={() => { if(categoryStatus.bakaran === 'open') { setActiveTab('bakaran'); setIsMenuOpen(false); } }}
+            className={`sidebar-link ${activeTab === 'bakaran' ? 'active' : ''} ${(categoryStatus.bakaran?.status || categoryStatus.bakaran) === 'closed' ? 'is-closed' : ''}`}
+            onClick={() => { if((categoryStatus.bakaran?.status || categoryStatus.bakaran) === 'open') { setActiveTab('bakaran'); setIsMenuOpen(false); } }}
           >
             <span className="link-icon">🔥</span>
             <span className="link-text">Bakaran</span>
-            {categoryStatus.bakaran === 'closed' && <span className="closed-icon-badge small"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>}
+            {(categoryStatus.bakaran?.status || categoryStatus.bakaran) === 'closed' && <span className="closed-icon-badge small"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>}
           </button>
           <button 
-            className={`sidebar-link ${activeTab === 'fashion' ? 'active' : ''} ${categoryStatus.fashion === 'closed' ? 'is-closed' : ''}`}
-            onClick={() => { if(categoryStatus.fashion === 'open') { setActiveTab('fashion'); setIsMenuOpen(false); } }}
+            className={`sidebar-link ${activeTab === 'fashion' ? 'active' : ''} ${(categoryStatus.fashion?.status || categoryStatus.fashion) === 'closed' ? 'is-closed' : ''}`}
+            onClick={() => { if((categoryStatus.fashion?.status || categoryStatus.fashion) === 'open') { setActiveTab('fashion'); setIsMenuOpen(false); } }}
           >
             <span className="link-icon">👗</span>
             <span className="link-text">Fashion</span>
-            {categoryStatus.fashion === 'closed' && <span className="closed-icon-badge small"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>}
+            {(categoryStatus.fashion?.status || categoryStatus.fashion) === 'closed' && <span className="closed-icon-badge small"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>}
           </button>
         </nav>
         <div className="sidebar-footer">

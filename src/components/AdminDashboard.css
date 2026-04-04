@@ -708,6 +708,26 @@
     color: #aa3bff;
 }
 
+.cat-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 4px;
+}
+
+.cat-toggle-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.cat-last-updated {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.4);
+    font-weight: 500;
+}
+
 .categoryOption {
     appearance: none;
     -webkit-appearance: none;

@@ -36,6 +36,14 @@ const DEFAULT_MENU_DATA = [
     { name: 'SEBLAK PREMIUM', variant: 'SEBLAK SPESIAL', price: 15000, category: 'makanan', id: 'def-29' },
     { name: 'SEBLAK PREMIUM', variant: 'SEBLAK ISTIMEWA', price: 20000, category: 'makanan', id: 'def-30' },
     { name: 'SEBLAK EXTRA', variant: 'SEBLAK BLENGER', price: 30000, category: 'makanan', id: 'def-31' },
+    // Bakaran
+    { name: 'DUMPLING', variant: 'CHEESE DUMPLING', price: 3000, category: 'bakaran', id: 'def-32' },
+    { name: 'DUMPLING', variant: 'CHICKEN DUMPLING', price: 3000, category: 'bakaran', id: 'def-33' },
+    { name: 'SOSIS', variant: 'SOSIS JUMBO', price: 10000, category: 'bakaran', id: 'def-34' },
+    { name: 'SOSIS', variant: 'SOSIS MEDIUM', price: 5000, category: 'bakaran', id: 'def-35' },
+    { name: 'BAKSO', variant: 'BAKSO BAKAR', price: 5000, category: 'bakaran', id: 'def-36' },
+    { name: 'SCALLOP', variant: 'SCALLOP BAKAR', price: 3000, category: 'bakaran', id: 'def-37' },
+    { name: 'CHIKUWA', variant: 'CHIKUWA BAKAR', price: 3000, category: 'bakaran', id: 'def-38' },
 ];
 
 const AdminDashboard = ({ onBack }) => {
@@ -494,6 +502,7 @@ const AdminDashboard = ({ onBack }) => {
                                     >
                                         <option value='minuman'>Minuman</option>
                                         <option value='makanan'>Seblak</option>
+                                        <option value='bakaran'>Bakaran</option>
                                     </select>
                                 </div>
                                 <button type='submit' className='add-btn-full'>Tambah Menu ke Card</button>

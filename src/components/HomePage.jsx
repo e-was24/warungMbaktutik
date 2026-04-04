@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./HomePage.css";
 import drinkHeroBg from "../assets/welcome_bg.png";
 import foodHeroBg from "../assets/seblak_hero.png";
+import bakaranHeroBg from "../assets/bakaran_hero.png";
 
 // KONFIGURASI NOMOR WHATSAPP (Diambil dari file .env)
 const WHATSAPP_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || "6281217819691";
@@ -9,7 +10,7 @@ const WHATSAPP_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || "6281217819691";
 const HomePage = ({ onAdminClick }) => {
   const [cart, setCart] = useState({});
   const [scrolled, setScrolled] = useState(false);
-  const [activeTab, setActiveTab] = useState("minuman"); // 'minuman' or 'makanan'
+  const [activeTab, setActiveTab] = useState("minuman"); // 'minuman', 'makanan', or 'bakaran'
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [customerInfo, setCustomerInfo] = useState({ name: "", address: "" });
   const [adminClickCount, setAdminClickCount] = useState(0);
@@ -18,6 +19,7 @@ const HomePage = ({ onAdminClick }) => {
   const [menuData, setMenuData] = useState({
     minuman: [],
     makanan: [],
+    bakaran: [],
   });
 
   useEffect(() => {
@@ -60,7 +62,7 @@ const HomePage = ({ onAdminClick }) => {
       // Final pass: Apply category fallbacks for groups still missing a custom image
       return Object.values(grouped).map(group => ({
         ...group,
-        image: group.image || (type === "minuman" ? drinkHeroBg : foodHeroBg)
+        image: group.image || (type === "minuman" ? drinkHeroBg : (type === "makanan" ? foodHeroBg : bakaranHeroBg))
       }));
     };
 
@@ -77,10 +79,15 @@ const HomePage = ({ onAdminClick }) => {
         custom.filter((p) => p.category === "makanan"),
         "makanan"
       );
+      const customBakaran = groupProducts(
+        custom.filter((p) => p.category === "bakaran"),
+        "bakaran"
+      );
 
       setMenuData({
         minuman: customMinuman,
         makanan: customMakanan,
+        bakaran: customBakaran,
       });
     };
 
@@ -107,10 +114,15 @@ const HomePage = ({ onAdminClick }) => {
             cloudProducts.filter((p) => p.category === "makanan"),
             "makanan"
           );
+          const cloudBakaran = groupProducts(
+            cloudProducts.filter((p) => p.category === "bakaran"),
+            "bakaran"
+          );
 
           setMenuData({
             minuman: cloudMinuman,
             makanan: cloudMakanan,
+            bakaran: cloudBakaran,
           });
 
           localStorage.setItem(
@@ -143,7 +155,7 @@ const HomePage = ({ onAdminClick }) => {
   }, []);
 
   const activeMenuData =
-    activeTab === "minuman" ? menuData.minuman : menuData.makanan;
+    activeTab === "minuman" ? menuData.minuman : (activeTab === "makanan" ? menuData.makanan : menuData.bakaran);
 
   const getCountdown = (targetTime) => {
     const diff = targetTime - currentTime.getTime();
@@ -279,6 +291,12 @@ const HomePage = ({ onAdminClick }) => {
             >
               🍜 Seblak
             </button>
+            <button
+              className={`switch-btn ${activeTab === "bakaran" ? "active" : ""}`}
+              onClick={() => setActiveTab("bakaran")}
+            >
+              🔥 Bakaran
+            </button>
           </div>
         </div>
       </header>
@@ -287,13 +305,13 @@ const HomePage = ({ onAdminClick }) => {
         <div
           className="hero-bg-faded"
           style={{
-            backgroundImage: `url(${activeTab === "minuman" ? drinkHeroBg : foodHeroBg})`,
+            backgroundImage: `url(${activeTab === "minuman" ? drinkHeroBg : (activeTab === "makanan" ? foodHeroBg : bakaranHeroBg)})`,
           }}
         ></div>
         <div className="hero-badge">
           {activeTab === "minuman"
             ? "Fresh Snacks & Drinks"
-            : "Spicy & Authentic Seblak"}
+            : (activeTab === "makanan" ? "Spicy & Authentic Seblak" : "Grilled Gourmet Treats")}
         </div>
         <h1 className="hero-title" onClick={handleHeroClick}>
           Cita Rasa{" "}
@@ -303,7 +321,7 @@ const HomePage = ({ onAdminClick }) => {
           <br />
           Dalam Setiap{" "}
           <span className="text-gradient">
-            {activeTab === "minuman" ? "Gelas" : "Suapan"}
+            {activeTab === "minuman" ? "Gelas" : (activeTab === "makanan" ? "Suapan" : "Gigitan")}
           </span>
         </h1>
       </section>

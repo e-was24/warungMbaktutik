@@ -74,6 +74,12 @@ body {
     --p-glow: rgba(255, 77, 77, 0.2);
 }
 
+.bakaran-active {
+    --p-accent: #ff8a05;
+    --p-accent-deep: #e67a00;
+    --p-glow: rgba(255, 138, 5, 0.2);
+}
+
 /* Decorative Blobs */
 .decorative-blob {
     position: fixed;

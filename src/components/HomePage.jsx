@@ -127,7 +127,7 @@ const HomePage = ({ onAdminClick }) => {
         // Support legacy array and new object format
         const cloudProducts = Array.isArray(cloudData)
           ? cloudData
-          : cloudData.products || [];
+          : (cloudData?.products || []);
 
         if (Array.isArray(cloudProducts)) {
           const cloudMinuman = groupProducts(
@@ -154,16 +154,16 @@ const HomePage = ({ onAdminClick }) => {
             fashion: cloudFashion,
           });
 
-          if (cloudData.categoryStatus) {
+          if (cloudData?.categoryStatus) {
             setCategoryStatus(cloudData.categoryStatus);
             localStorage.setItem('warung_category_status', JSON.stringify(cloudData.categoryStatus));
           }
 
-          if (cloudData.orders) {
+          if (cloudData?.orders) {
             localStorage.setItem('warung_orders', JSON.stringify(cloudData.orders));
           }
 
-          if (cloudData.autoSchedule) {
+          if (cloudData?.autoSchedule) {
             setAutoSchedule(cloudData.autoSchedule);
             localStorage.setItem('warung_auto_schedule', JSON.stringify(cloudData.autoSchedule));
           }

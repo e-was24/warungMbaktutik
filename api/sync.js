@@ -12,9 +12,11 @@ export default async function handler(req, res) {
     if (req.method === 'GET') {
       console.log("GET sync initiated");
       const { blobs } = await list({ prefix: 'warung-menu.json' });
-      if (!blobs || blobs.length === 0) return res.status(200).json([]);
+      if (!blobs || blobs.length === 0) return res.status(200).json({ products: [], categoryStatus: {}, autoSchedule: {}, orders: [], isInitialized: true });
       
-      const response = await fetch(blobs[0].url);
+      const response = await fetch(blobs[0].url + "?t=" + Date.now()); // Bust cache
+      if (!response.ok) throw new Error(`Blob fetch failed: ${response.statusText}`);
+      
       const data = await response.json();
       return res.status(200).json(data);
     } 
@@ -30,13 +32,15 @@ export default async function handler(req, res) {
 
       const action = body.action || 'sync_all';
       
-      // Fetch current data first if we are doing an incremental update (like adding an order)
-      let currentData = { products: [], categoryStatus: {}, orders: [], isInitialized: true };
+      // Fetch current data first
+      let currentData = { products: [], categoryStatus: {}, autoSchedule: {}, orders: [], isInitialized: true };
       try {
         const { blobs } = await list({ prefix: 'warung-menu.json' });
         if (blobs && blobs.length > 0) {
-          const fetchRes = await fetch(blobs[0].url);
-          currentData = await fetchRes.json();
+          const fetchRes = await fetch(blobs[0].url + "?t=" + Date.now());
+          if (fetchRes.ok) {
+            currentData = await fetchRes.json();
+          }
         }
       } catch (err) { console.error("Fetch current data failed", err); }
 
@@ -46,10 +50,7 @@ export default async function handler(req, res) {
         const newOrder = body.order;
         if (!newOrder) return res.status(400).json({ error: 'Data pesanan (order) missing' });
         
-        // Ensure orders array exists
         if (!Array.isArray(currentData.orders)) currentData.orders = [];
-        
-        // Append new order
         currentData.orders.push(newOrder);
         finalData = currentData;
       } else if (action === 'update_order_status') {
@@ -63,10 +64,11 @@ export default async function handler(req, res) {
         }
         finalData = currentData;
       } else {
-        // Default: sync_all (Overwrite products and categories, but KEEP existing orders if not provided)
+        // Default: sync_all
         finalData = {
           products: body.products || currentData.products || [],
           categoryStatus: body.categoryStatus || currentData.categoryStatus || {},
+          autoSchedule: body.autoSchedule || currentData.autoSchedule || {},
           orders: body.orders || currentData.orders || [],
           isInitialized: true
         };
@@ -90,7 +92,6 @@ export default async function handler(req, res) {
     return res.status(500).json({ 
       error: 'CRITICAL_SERVER_ERROR',
       message: error.message,
-      stack: error.stack?.split('\n')[0], // Just first line for alert
       token_check: process.env.BLOB_READ_WRITE_TOKEN ? "Token OK" : "Token MISSING"
     });
   }

@@ -69,6 +69,7 @@ export default async function handler(req, res) {
           products: body.products || currentData.products || [],
           categoryStatus: body.categoryStatus || currentData.categoryStatus || {},
           autoSchedule: body.autoSchedule || currentData.autoSchedule || {},
+          news: body.news || currentData.news || [],
           orders: body.orders || currentData.orders || [],
           isInitialized: true
         };

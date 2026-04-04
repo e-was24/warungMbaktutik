@@ -30,6 +30,7 @@ const HomePage = ({ onAdminClick }) => {
     openTime: '09:00',
     closeTime: '19:00'
   });
+  const [news, setNews] = useState([]);
 
   const [menuData, setMenuData] = useState({
     minuman: [],
@@ -113,6 +114,9 @@ const HomePage = ({ onAdminClick }) => {
 
       const storedSchedule = JSON.parse(localStorage.getItem('warung_auto_schedule') || '{}');
       if (storedSchedule.enabled !== undefined) setAutoSchedule(storedSchedule);
+
+      const storedNews = JSON.parse(localStorage.getItem('warung_news') || '[]');
+      if (storedNews.length > 0) setNews(storedNews);
     };
 
     loadCustomProducts();
@@ -166,6 +170,11 @@ const HomePage = ({ onAdminClick }) => {
           if (cloudData?.autoSchedule) {
             setAutoSchedule(cloudData.autoSchedule);
             localStorage.setItem('warung_auto_schedule', JSON.stringify(cloudData.autoSchedule));
+          }
+
+          if (cloudData?.news) {
+            setNews(cloudData.news);
+            localStorage.setItem('warung_news', JSON.stringify(cloudData.news));
           }
         }
       } catch (err) {
@@ -461,6 +470,72 @@ const HomePage = ({ onAdminClick }) => {
     );
   }
 
+  if (activeTab === "news") {
+    return (
+      <div className={`home-page-premium news-active`}>
+        <div className="decorative-blob blob-1"></div>
+        <div className="decorative-blob blob-2"></div>
+        
+        <header className={`premium-nav ${scrolled ? "scrolled" : ""}`}>
+          <div className="nav-content">
+            <button className={`mobile-menu-toggle ${isMenuOpen ? 'active' : ''}`} onClick={() => setIsMenuOpen(!isMenuOpen)}>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="2" y1="12" x2="22" y2="12" />
+                <line x1="2" y1="12" x2="22" y2="12" />
+                <line x1="2" y1="12" x2="22" y2="12" />
+              </svg>
+            </button>
+
+            <div className="nav-brand" onClick={() => setAdminClickCount(c => c + 1)}>
+              <span className="brand-accent">W</span>arung <span>M</span>bk Tutik
+            </div>
+
+            <div className="category-switcher">
+              <button className={`switch-btn ${activeTab === "minuman" ? "active" : ""}`} onClick={() => setActiveTab("minuman")}>🍹 Menu</button>
+              <button className={`switch-btn active`} onClick={() => setActiveTab("news")}>📢 Berita</button>
+            </div>
+          </div>
+        </header>
+
+        <main className="news-container-view">
+          <div className="news-hero">
+            <h1>Berita & Update Harga</h1>
+            <p>Info terbaru seputar menu dan promo hari ini</p>
+          </div>
+
+          <div className="news-timeline">
+            {news.length === 0 ? (
+              <div className="empty-news-client">
+                <div className="empty-icon">🔔</div>
+                <p>Belum ada berita terbaru saat ini.</p>
+              </div>
+            ) : (
+              news.map((item, idx) => (
+                <div key={item.id} className="news-item-card" style={{ animationDelay: `${idx * 0.1}s` }}>
+                  <div className="news-card-dot"></div>
+                  <div className="news-card-content">
+                    <div className="news-meta">
+                      <span className="news-tag">UPDATE</span>
+                      <span className="news-date">{new Date(item.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                    </div>
+                    <h2 className="news-title">{item.title}</h2>
+                    <p className="news-text">{item.content}</p>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </main>
+
+        <footer className="unified-footer">
+          <div className="footer-content">
+            <p>© 2024 Warung Mbk Tutik. All rights reserved.</p>
+          </div>
+        </footer>
+      </div>
+    );
+  }
+
   return (
     <div className={`home-page-premium ${activeTab}-active`}>
       <div className="decorative-blob blob-1"></div>
@@ -532,6 +607,12 @@ const HomePage = ({ onAdminClick }) => {
                   </svg>
                 </span>
               )}
+            </button>
+            <button
+              className={`switch-btn ${activeTab === "news" ? "active" : ""}`}
+              onClick={() => setActiveTab("news")}
+            >
+              📢 Berita
             </button>
           </div>
 

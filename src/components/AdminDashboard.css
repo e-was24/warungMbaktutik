@@ -708,6 +708,108 @@
     color: #aa3bff;
 }
 
+/* News Section Styling */
+.news-section-box {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--p-border);
+    border-radius: 24px;
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.news-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--p-border);
+}
+
+.news-form input, .news-form textarea {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--p-border);
+    border-radius: 12px;
+    padding: 12px;
+    color: white;
+    font-family: inherit;
+    outline: none;
+    transition: all 0.3s;
+}
+
+.news-form textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.news-form input:focus, .news-form textarea:focus {
+    border-color: var(--p-accent);
+    box-shadow: 0 0 15px var(--p-glow);
+}
+
+.add-news-btn {
+    background: linear-gradient(135deg, var(--p-accent) 0%, #ff8c00 100%);
+    border: none;
+    border-radius: 12px;
+    padding: 14px;
+    color: white;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.add-news-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px var(--p-glow);
+}
+
+.news-admin-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--p-border);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 12px;
+}
+
+.news-admin-card .n-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.news-admin-card .n-date {
+    font-size: 11px;
+    color: var(--p-text-muted);
+}
+
+.news-admin-card h3 {
+    font-size: 16px;
+    margin: 0;
+}
+
+.news-admin-card p {
+    font-size: 14px;
+    color: var(--p-text-muted);
+    margin-bottom: 12px;
+}
+
+.delete-news {
+    background: rgba(255, 20, 20, 0.1);
+    border: 1px solid rgba(255, 20, 20, 0.3);
+    color: #ff4444;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.delete-news:hover {
+    background: #ff4444;
+    color: white;
+}
+
 /* Auto-Schedule Styling */
 .auto-schedule-box {
     background: rgba(255, 255, 255, 0.03);

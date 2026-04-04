@@ -73,6 +73,8 @@ const AdminDashboard = ({ onBack }) => {
         closeTime: '19:00'
     });
     const [syncNotification, setSyncNotification] = useState({ show: false, message: '', type: 'loading' });
+    const [news, setNews] = useState([]);
+    const [newNews, setNewNews] = useState({ title: '', content: '' });
 
     const formatTimeAgo = (timestamp) => {
         if (!timestamp) return '';
@@ -111,6 +113,11 @@ const AdminDashboard = ({ onBack }) => {
                 if (cloudData.categoryStatus) {
                     setCategoryStatus(cloudData.categoryStatus);
                     localStorage.setItem('warung_category_status', JSON.stringify(cloudData.categoryStatus));
+                }
+
+                if (cloudData.news) {
+                    setNews(cloudData.news);
+                    localStorage.setItem('warung_news', JSON.stringify(cloudData.news));
                 }
 
                 if (cloudData.orders) {
@@ -160,6 +167,9 @@ const AdminDashboard = ({ onBack }) => {
 
         const storedSchedule = localStorage.getItem('warung_auto_schedule');
         if (storedSchedule) setAutoSchedule(JSON.parse(storedSchedule));
+
+        const storedNews = localStorage.getItem('warung_news');
+        if (storedNews) setNews(JSON.parse(storedNews));
     };
 
     const resizeImage = (file) => {
@@ -198,7 +208,7 @@ const AdminDashboard = ({ onBack }) => {
         }
     };
 
-    const pushToCloud = async (products, catStatus, schedule = autoSchedule) => {
+    const pushToCloud = async (products, catStatus, schedule = autoSchedule, newsData = news) => {
         setSyncStatus('Menyimpan...');
         setSyncNotification({ show: true, message: 'Menghubungkan ke Cloud...', type: 'loading' });
         
@@ -211,6 +221,7 @@ const AdminDashboard = ({ onBack }) => {
                     products: products,
                     categoryStatus: catStatus,
                     autoSchedule: schedule,
+                    news: newsData,
                     orders: JSON.parse(localStorage.getItem('warung_orders') || '[]')
                 })
             });
@@ -324,6 +335,28 @@ const AdminDashboard = ({ onBack }) => {
         window.dispatchEvent(new Event('storage'));
         
         pushToCloud(updatedProducts, categoryStatus);
+    };
+
+    const handlePostNews = () => {
+        if (!newNews.title || !newNews.content) return alert("Isi judul dan konten berita!");
+        const updatedNews = [{
+            id: Date.now(),
+            title: newNews.title,
+            content: newNews.content,
+            date: new Date().toISOString()
+        }, ...news];
+        setNews(updatedNews);
+        localStorage.setItem('warung_news', JSON.stringify(updatedNews));
+        setNewNews({ title: '', content: '' });
+        pushToCloud(customProducts, categoryStatus, autoSchedule, updatedNews);
+    };
+
+    const deleteNews = (id) => {
+        if (!window.confirm("Hapus berita ini?")) return;
+        const updatedNews = news.filter(n => n.id !== id);
+        setNews(updatedNews);
+        localStorage.setItem('warung_news', JSON.stringify(updatedNews));
+        pushToCloud(customProducts, categoryStatus, autoSchedule, updatedNews);
     };
 
     const handleGroupImageUpload = async (groupName, file) => {
@@ -748,6 +781,40 @@ const AdminDashboard = ({ onBack }) => {
                 </div>
 
                 {/* Category Status Toggle */}
+                <div className='admin-section news-section-box'>
+                    <h2>Kelola Berita & Update Harga</h2>
+                    <div className='news-form'>
+                        <input 
+                            type="text" 
+                            placeholder="Judul Berita/Update" 
+                            value={newNews.title}
+                            onChange={(e) => setNewNews({ ...newNews, title: e.target.value })}
+                        />
+                        <textarea 
+                            placeholder="Isi berita atau rincian update harga..." 
+                            value={newNews.content}
+                            onChange={(e) => setNewNews({ ...newNews, content: e.target.value })}
+                        />
+                        <button className='add-news-btn' onClick={handlePostNews}>PUBLIKASIKAN BERITA 📢</button>
+                    </div>
+                    <div className='news-list-admin'>
+                        {news.length === 0 ? (
+                            <p className='empty-news'>Belum ada berita yang diposting.</p>
+                        ) : (
+                            news.map(n => (
+                                <div key={n.id} className='news-admin-card'>
+                                    <div className='n-header'>
+                                        <span className='n-date'>{new Date(n.date).toLocaleDateString('id-ID')}</span>
+                                        <h3>{n.title}</h3>
+                                    </div>
+                                    <p>{n.content}</p>
+                                    <button className='delete-news' onClick={() => deleteNews(n.id)}>Hapus</button>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </div>
+
                 <div className='admin-section auto-schedule-box'>
                     <h2>Jadwal Buka/Tutup Otomatis</h2>
                     <div className='schedule-controls'>

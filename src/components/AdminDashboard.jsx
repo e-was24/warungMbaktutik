@@ -72,6 +72,7 @@ const AdminDashboard = ({ onBack }) => {
         openTime: '09:00',
         closeTime: '19:00'
     });
+    const [syncNotification, setSyncNotification] = useState({ show: false, message: '', type: 'loading' });
 
     const formatTimeAgo = (timestamp) => {
         if (!timestamp) return '';

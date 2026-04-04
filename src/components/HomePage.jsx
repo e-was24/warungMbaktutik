@@ -3,6 +3,7 @@ import "./HomePage.css";
 import drinkHeroBg from "../assets/welcome_bg.png";
 import foodHeroBg from "../assets/seblak_hero.png";
 import bakaranHeroBg from "../assets/bakaran_hero.png";
+import fashionHeroBg from "../assets/fashion_hero.png";
 
 // KONFIGURASI NOMOR WHATSAPP (Diambil dari file .env)
 const WHATSAPP_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || "6281217819691";
@@ -10,7 +11,7 @@ const WHATSAPP_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || "6281217819691";
 const HomePage = ({ onAdminClick }) => {
   const [cart, setCart] = useState({});
   const [scrolled, setScrolled] = useState(false);
-  const [activeTab, setActiveTab] = useState("minuman"); // 'minuman', 'makanan', or 'bakaran'
+  const [activeTab, setActiveTab] = useState("minuman"); // 'minuman', 'makanan', 'bakaran', or 'fashion'
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [customerInfo, setCustomerInfo] = useState({ name: "", address: "" });
   const [adminClickCount, setAdminClickCount] = useState(0);
@@ -21,6 +22,7 @@ const HomePage = ({ onAdminClick }) => {
     minuman: [],
     makanan: [],
     bakaran: [],
+    fashion: [],
   });
 
   useEffect(() => {
@@ -63,7 +65,7 @@ const HomePage = ({ onAdminClick }) => {
       // Final pass: Apply category fallbacks for groups still missing a custom image
       return Object.values(grouped).map(group => ({
         ...group,
-        image: group.image || (type === "minuman" ? drinkHeroBg : (type === "makanan" ? foodHeroBg : bakaranHeroBg))
+        image: group.image || (type === "minuman" ? drinkHeroBg : (type === "makanan" ? foodHeroBg : (type === "bakaran" ? bakaranHeroBg : fashionHeroBg)))
       }));
     };
 
@@ -84,11 +86,16 @@ const HomePage = ({ onAdminClick }) => {
         custom.filter((p) => p.category === "bakaran"),
         "bakaran"
       );
+      const customFashion = groupProducts(
+        custom.filter((p) => p.category === "fashion"),
+        "fashion"
+      );
 
       setMenuData({
         minuman: customMinuman,
         makanan: customMakanan,
         bakaran: customBakaran,
+        fashion: customFashion,
       });
     };
 
@@ -119,11 +126,16 @@ const HomePage = ({ onAdminClick }) => {
             cloudProducts.filter((p) => p.category === "bakaran"),
             "bakaran"
           );
+          const cloudFashion = groupProducts(
+            cloudProducts.filter((p) => p.category === "fashion"),
+            "fashion"
+          );
 
           setMenuData({
             minuman: cloudMinuman,
             makanan: cloudMakanan,
             bakaran: cloudBakaran,
+            fashion: cloudFashion,
           });
 
           localStorage.setItem(
@@ -156,7 +168,7 @@ const HomePage = ({ onAdminClick }) => {
   }, []);
 
   const activeMenuData =
-    activeTab === "minuman" ? menuData.minuman : (activeTab === "makanan" ? menuData.makanan : menuData.bakaran);
+    activeTab === "minuman" ? menuData.minuman : (activeTab === "makanan" ? menuData.makanan : (activeTab === "bakaran" ? menuData.bakaran : menuData.fashion));
 
   const filteredMenuData = activeMenuData.map(section => {
     // Filter items within the section
@@ -315,6 +327,12 @@ const HomePage = ({ onAdminClick }) => {
             >
               🔥 Bakaran
             </button>
+            <button
+              className={`switch-btn ${activeTab === "fashion" ? "active" : ""}`}
+              onClick={() => setActiveTab("fashion")}
+            >
+              👗 Fashion
+            </button>
           </div>
           <div className="premium-search-wrapper">
             <div className="search-icon-box">
@@ -326,7 +344,7 @@ const HomePage = ({ onAdminClick }) => {
             <input 
               type="text" 
               className="premium-search-input" 
-              placeholder={`Cari ${activeTab === 'minuman' ? 'minuman' : (activeTab === 'makanan' ? 'seblak' : 'bakaran')} favoritmu...`}
+              placeholder={`Cari ${activeTab === 'minuman' ? 'minuman' : (activeTab === 'makanan' ? 'seblak' : (activeTab === 'bakaran' ? 'bakaran' : 'fashion'))} favoritmu...`}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -341,13 +359,13 @@ const HomePage = ({ onAdminClick }) => {
         <div
           className="hero-bg-faded"
           style={{
-            backgroundImage: `url(${activeTab === "minuman" ? drinkHeroBg : (activeTab === "makanan" ? foodHeroBg : bakaranHeroBg)})`,
+            backgroundImage: `url(${activeTab === "minuman" ? drinkHeroBg : (activeTab === "makanan" ? foodHeroBg : (activeTab === "bakaran" ? bakaranHeroBg : fashionHeroBg))})`,
           }}
         ></div>
         <div className="hero-badge">
           {activeTab === "minuman"
             ? "Fresh Snacks & Drinks"
-            : (activeTab === "makanan" ? "Spicy & Authentic Seblak" : "Grilled Gourmet Treats")}
+            : (activeTab === "makanan" ? "Spicy & Authentic Seblak" : (activeTab === "bakaran" ? "Grilled Gourmet Treats" : "Premium Fashion Collection"))}
         </div>
         <h1 className="hero-title" onClick={handleHeroClick}>
           Cita Rasa{" "}
@@ -357,7 +375,7 @@ const HomePage = ({ onAdminClick }) => {
           <br />
           Dalam Setiap{" "}
           <span className="text-gradient">
-            {activeTab === "minuman" ? "Gelas" : (activeTab === "makanan" ? "Suapan" : "Gigitan")}
+            {activeTab === "minuman" ? "Gelas" : (activeTab === "makanan" ? "Suapan" : (activeTab === "bakaran" ? "Gigitan" : "Gaya"))}
           </span>
         </h1>
       </section>
@@ -377,7 +395,7 @@ const HomePage = ({ onAdminClick }) => {
           <div className="search-empty-state fade-in-up">
             <div className="empty-icon">🔍</div>
             <h3>Menu Tidak Ditemukan</h3>
-            <p>Coba gunakan kata kunci lain untuk menemukan {activeTab === 'minuman' ? 'minuman' : (activeTab === 'makanan' ? 'seblak' : 'bakaran')} favoritmu.</p>
+            <p>Coba gunakan kata kunci lain untuk menemukan {activeTab === 'minuman' ? 'minuman' : (activeTab === 'makanan' ? 'seblak' : (activeTab === 'bakaran' ? 'bakaran' : 'fashion'))} favoritmu.</p>
             <button className="reset-search-btn" onClick={() => setSearchTerm("")}>Lihat Semua Menu</button>
           </div>
         ) : (

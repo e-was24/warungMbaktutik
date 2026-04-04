@@ -44,6 +44,11 @@ const DEFAULT_MENU_DATA = [
     { name: 'BAKSO', variant: 'BAKSO BAKAR', price: 5000, category: 'bakaran', id: 'def-36' },
     { name: 'SCALLOP', variant: 'SCALLOP BAKAR', price: 3000, category: 'bakaran', id: 'def-37' },
     { name: 'CHIKUWA', variant: 'CHIKUWA BAKAR', price: 3000, category: 'bakaran', id: 'def-38' },
+    // Fashion
+    { name: 'DASTER', variant: 'DASTER BUSUI ARAB', price: 35000, category: 'fashion', id: 'def-39' },
+    { name: 'HIJAB', variant: 'BELLA SQUARE', price: 15000, category: 'fashion', id: 'def-40' },
+    { name: 'KAOS', variant: 'OVERSIZE T-SHIRT', price: 45000, category: 'fashion', id: 'def-41' },
+    { name: 'CELANA', variant: 'KULOT LINEN', price: 55000, category: 'fashion', id: 'def-42' },
 ];
 
 const AdminDashboard = ({ onBack }) => {
@@ -503,6 +508,7 @@ const AdminDashboard = ({ onBack }) => {
                                         <option value='minuman'>Minuman</option>
                                         <option value='makanan'>Seblak</option>
                                         <option value='bakaran'>Bakaran</option>
+                                        <option value='fashion'>Fashion</option>
                                     </select>
                                 </div>
                                 <button type='submit' className='add-btn-full'>Tambah Menu ke Card</button>

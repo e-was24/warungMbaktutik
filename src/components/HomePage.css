@@ -80,6 +80,12 @@ body {
     --p-glow: rgba(255, 138, 5, 0.2);
 }
 
+.fashion-active {
+    --p-accent: #ec4899;
+    --p-accent-deep: #be185d;
+    --p-glow: rgba(236, 72, 153, 0.2);
+}
+
 /* Decorative Blobs */
 .decorative-blob {
     position: fixed;

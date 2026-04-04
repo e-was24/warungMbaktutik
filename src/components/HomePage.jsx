@@ -15,6 +15,7 @@ const HomePage = ({ onAdminClick }) => {
   const [customerInfo, setCustomerInfo] = useState({ name: "", address: "" });
   const [adminClickCount, setAdminClickCount] = useState(0);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [searchTerm, setSearchTerm] = useState("");
 
   const [menuData, setMenuData] = useState({
     minuman: [],
@@ -157,6 +158,23 @@ const HomePage = ({ onAdminClick }) => {
   const activeMenuData =
     activeTab === "minuman" ? menuData.minuman : (activeTab === "makanan" ? menuData.makanan : menuData.bakaran);
 
+  const filteredMenuData = activeMenuData.map(section => {
+    // Filter items within the section
+    const filteredItems = section.items.filter(item => 
+      item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (item.desc && item.desc.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
+
+    // If the section name matches the search term, show ALL items in that section
+    const sectionMatches = section.category.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    return {
+      ...section,
+      items: sectionMatches ? section.items : filteredItems,
+      isVisible: sectionMatches || filteredItems.length > 0
+    };
+  }).filter(section => section.isVisible);
+
   const getCountdown = (targetTime) => {
     const diff = targetTime - currentTime.getTime();
     if (diff <= 0) return null;
@@ -298,6 +316,24 @@ const HomePage = ({ onAdminClick }) => {
               🔥 Bakaran
             </button>
           </div>
+          <div className="premium-search-wrapper">
+            <div className="search-icon-box">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.3-4.3" />
+              </svg>
+            </div>
+            <input 
+              type="text" 
+              className="premium-search-input" 
+              placeholder={`Cari ${activeTab === 'minuman' ? 'minuman' : (activeTab === 'makanan' ? 'seblak' : 'bakaran')} favoritmu...`}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            {searchTerm && (
+              <button className="clear-search" onClick={() => setSearchTerm("")}>&times;</button>
+            )}
+          </div>
         </div>
       </header>
 
@@ -337,12 +373,20 @@ const HomePage = ({ onAdminClick }) => {
       )}
 
       <main className="premium-menu-grid">
-        {activeMenuData.map((section, sIdx) => (
-          <div
-            key={section.id}
-            className="premium-card-wrapper fade-in-up"
-            style={{ animationDelay: `${sIdx * 0.1}s` }}
-          >
+        {filteredMenuData.length === 0 ? (
+          <div className="search-empty-state fade-in-up">
+            <div className="empty-icon">🔍</div>
+            <h3>Menu Tidak Ditemukan</h3>
+            <p>Coba gunakan kata kunci lain untuk menemukan {activeTab === 'minuman' ? 'minuman' : (activeTab === 'makanan' ? 'seblak' : 'bakaran')} favoritmu.</p>
+            <button className="reset-search-btn" onClick={() => setSearchTerm("")}>Lihat Semua Menu</button>
+          </div>
+        ) : (
+          filteredMenuData.map((section, sIdx) => (
+            <div
+              key={section.id}
+              className="premium-card-wrapper fade-in-up"
+              style={{ animationDelay: `${sIdx * 0.1}s` }}
+            >
             <div className={`premium-card ${section.id}-theme`}>
               <div className="card-visual-wrapper">
                 <img
@@ -431,7 +475,7 @@ const HomePage = ({ onAdminClick }) => {
               </div>
             </div>
           </div>
-        ))}
+        )))}
       </main>
 
       {getTotalItems() > 0 && (

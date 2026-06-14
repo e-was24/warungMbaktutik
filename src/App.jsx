@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import WelcomePopup from './components/WelcomePopup'
 import HomePage from './components/HomePage'
 import AdminDashboard from './components/AdminDashboard'
+import Meta from './components/Meta'
 import './App.css'
 
 function App() {
@@ -9,6 +10,8 @@ function App() {
 
   return (
     <>
+      <Meta />
+
       <WelcomePopup />
       {isAdminView ? (
         <AdminDashboard onBack={() => setIsAdminView(false)} />
